@@ -1,0 +1,3646 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KHAN Prompts - Curated AI Prompts Library</title>
+  <meta name="description" content="Explore, copy, and save high-performing curated AI prompts for Midjourney, ChatGPT, Claude, and more. 100% Free forever." />
+  
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  
+  <!-- Supabase JS Client v2 CDN & Browser Environment Config -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="env.js"></script>
+
+  <style>
+    /* ==========================================================
+       DESIGN SYSTEM & CSS VARIABLES
+       ========================================================== */
+    :root {
+      --primary: #7c3aed;
+      --primary-hover: #6d28d9;
+      --primary-rgb: 124, 58, 237;
+      --accent: #ec4899;
+      --accent-gradient: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f97316 100%);
+      --text-gradient: linear-gradient(135deg, #c084fc 0%, #f472b6 50%, #fb923c 100%);
+      
+      /* Dark Theme (Default) */
+      --bg: #0f0f1a;
+      --bg-surface: #141426;
+      --card: #1a1a2e;
+      --card-hover: #22223c;
+      --text: #ffffff;
+      --muted: #a1a1aa;
+      --border: #2a2a40;
+      --border-focus: #7c3aed;
+      --code-bg: #0b0b14;
+      --modal-overlay: rgba(5, 5, 12, 0.82);
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
+      --shadow-glow: 0 0 25px rgba(124, 58, 237, 0.25);
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --bg-surface: #ffffff;
+      --card: #ffffff;
+      --card-hover: #f1f5f9;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --border-focus: #7c3aed;
+      --code-bg: #f1f5f9;
+      --modal-overlay: rgba(15, 23, 42, 0.6);
+      --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.1);
+      --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.15);
+    }
+
+    /* Reset & Base Styles */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+    }
+
+    /* ==========================================================
+       COMPONENTS & ATOMS
+       ========================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.35);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-gradient {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(236, 72, 153, 0.3);
+    }
+
+    .btn-gradient:hover {
+      box-shadow: 0 6px 22px rgba(236, 72, 153, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(var(--primary-rgb), 0.08);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      border-radius: 8px;
+    }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-icon:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-free {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-featured {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .badge-category {
+      background: rgba(124, 58, 237, 0.12);
+      color: #c084fc;
+      border: 1px solid rgba(124, 58, 237, 0.25);
+    }
+
+    [data-theme="light"] .badge-category {
+      background: rgba(124, 58, 237, 0.1);
+      color: #7c3aed;
+    }
+
+    /* Form Inputs */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .input-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .input-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.2);
+    }
+
+    textarea.input-field {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    /* ==========================================================
+       LAYOUT & HEADER
+       ========================================================== */
+    .announcement-bar {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .announcement-bar.hidden {
+      display: none !important;
+    }
+
+    .announcement-close {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    .announcement-close:hover {
+      opacity: 1;
+    }
+
+    /* Header Nav */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 15, 26, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    [data-theme="light"] .navbar {
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    .nav-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+      font-size: 1.45rem;
+      letter-spacing: -0.5px;
+      cursor: pointer;
+    }
+
+    .brand-gradient {
+      background: var(--text-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      position: relative;
+      padding: 4px 0;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--text);
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+    }
+
+    main {
+      flex: 1;
+    }
+
+    /* Demo Mode Banner Notice */
+    .status-banner {
+      background: rgba(124, 58, 237, 0.12);
+      border-bottom: 1px solid rgba(124, 58, 237, 0.25);
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      text-align: center;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+
+    .status-dot.warn {
+      background: #f59e0b;
+    }
+
+    /* ==========================================================
+       HERO SECTION
+       ========================================================== */
+    .hero {
+      padding: 70px 0 50px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 650px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.22) 0%, rgba(236, 72, 153, 0.08) 50%, transparent 70%);
+      filter: blur(50px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(var(--primary-rgb), 0.1);
+      border: 1px solid rgba(var(--primary-rgb), 0.3);
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #c084fc;
+      margin-bottom: 20px;
+    }
+
+    [data-theme="light"] .hero-tag {
+      color: #7c3aed;
+    }
+
+    .hero h1 {
+      font-size: 3.4rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      margin-bottom: 18px;
+    }
+
+    .hero p.tagline {
+      font-size: 1.25rem;
+      color: var(--muted);
+      margin-bottom: 36px;
+      font-weight: 400;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-search-box {
+      max-width: 620px;
+      margin: 0 auto 40px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-search-input {
+      width: 100%;
+      padding: 16px 20px 16px 52px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      color: var(--text);
+      font-size: 1.05rem;
+      box-shadow: var(--shadow-md);
+      transition: all 0.25s ease;
+    }
+
+    .hero-search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.25), var(--shadow-md);
+      outline: none;
+    }
+
+    .hero-search-icon {
+      position: absolute;
+      left: 18px;
+      color: var(--muted);
+      font-size: 1.25rem;
+      pointer-events: none;
+    }
+
+    /* Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 20px 16px;
+      border-radius: 16px;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(var(--primary-rgb), 0.4);
+    }
+
+    .stat-number {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Quick category chips */
+    .category-pills {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 32px 0 10px;
+    }
+
+    .pill-btn {
+      padding: 8px 18px;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pill-btn:hover, .pill-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(var(--primary-rgb), 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* ==========================================================
+       SECTION HEADINGS & GRIDS
+       ========================================================== */
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .section-title-wrap h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+
+    .section-title-wrap p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    .prompts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 26px;
+      margin-bottom: 40px;
+    }
+
+    /* ==========================================================
+       CARD COMPONENT
+       ========================================================== */
+    .prompt-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                  box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                  border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .prompt-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md), var(--shadow-glow);
+      border-color: rgba(var(--primary-rgb), 0.5);
+    }
+
+    .card-thumb-wrapper {
+      position: relative;
+      height: 190px;
+      width: 100%;
+      overflow: hidden;
+      background: #141424;
+    }
+
+    .card-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .prompt-card:hover .card-thumb {
+      transform: scale(1.05);
+    }
+
+    .card-badges {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .card-cat-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+    }
+
+    .card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      cursor: pointer;
+      line-height: 1.35;
+      transition: color 0.2s ease;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-title:hover {
+      color: var(--primary);
+    }
+
+    .card-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .prompt-preview-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      margin-bottom: 16px;
+      position: relative;
+      line-height: 1.45;
+      max-height: 72px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .prompt-preview-box::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 24px;
+      background: linear-gradient(to bottom, transparent, var(--code-bg));
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding-top: 12px;
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+    }
+
+    .meta-metrics {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .metric-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 14px;
+    }
+
+    .card-actions .btn {
+      flex: 1;
+    }
+
+    .like-active {
+      color: #ef4444 !important;
+      border-color: rgba(239, 68, 68, 0.4) !important;
+      background: rgba(239, 68, 68, 0.1) !important;
+    }
+
+    .save-active {
+      color: #f59e0b !important;
+      border-color: rgba(245, 158, 11, 0.4) !important;
+      background: rgba(245, 158, 11, 0.1) !important;
+    }
+
+    /* ==========================================================
+       PAGES (SPA CONTROL)
+       ========================================================== */
+    .page-section {
+      display: none;
+      padding: 40px 0 80px;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Prompts Page Filters */
+    .filter-bar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .filter-search {
+      flex: 2;
+      min-width: 240px;
+    }
+
+    .filter-select {
+      flex: 1;
+      min-width: 160px;
+      padding: 10px 14px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.92rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .filter-select:focus {
+      border-color: var(--primary);
+    }
+
+    /* Contact Page */
+    .contact-wrapper {
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .contact-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 44px 32px;
+      box-shadow: var(--shadow-md);
+      margin-top: 24px;
+    }
+
+    .contact-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(37, 211, 102, 0.15);
+      color: #25D366;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+    }
+
+    .contact-info-list {
+      margin: 28px 0;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .contact-info-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 0.95rem;
+    }
+
+    /* Auth Pages (Login & Signup) */
+    .auth-card {
+      max-width: 440px;
+      margin: 40px auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 36px 30px;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+    }
+
+    .auth-card h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .auth-card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 26px;
+    }
+
+    .auth-footer-text {
+      margin-top: 20px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .auth-footer-text a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Dashboard (My Space) */
+    .dashboard-header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .user-avatar-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--accent-gradient);
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+    }
+
+    /* Admin Panel */
+    .admin-container {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 30px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .admin-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 26px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .admin-tab-btn {
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--code-bg);
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .admin-tab-btn.active, .admin-tab-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .admin-tab-content {
+      display: none;
+    }
+
+    .admin-tab-content.active {
+      display: block;
+    }
+
+    .admin-table-wrap {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin-top: 16px;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    .admin-table th {
+      background: var(--code-bg);
+      padding: 12px 16px;
+      font-weight: 700;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .admin-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .admin-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* ==========================================================
+       MODALS & TOAST
+       ========================================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--modal-overlay);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-md), 0 0 40px rgba(0,0,0,0.5);
+      transform: translateY(20px) scale(0.96);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .modal-overlay.open .modal-card {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+    }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-prompt-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: var(--text);
+      user-select: all;
+      margin: 16px 0;
+      position: relative;
+    }
+
+    .modal-footer {
+      padding: 18px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: #1e1b4b;
+      color: #ffffff;
+      border: 1px solid #6366f1;
+      padding: 12px 22px;
+      border-radius: 30px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      animation: toastIn 0.3s ease forwards;
+      pointer-events: auto;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Footer */
+    footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      padding: 48px 0 32px;
+      margin-top: auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 36px;
+    }
+
+    .footer-col h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--text);
+    }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-logo-secret {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Empty States */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero h1 { font-size: 2.5rem; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        padding: 20px;
+        gap: 16px;
+      }
+      .nav-links.mobile-open {
+        display: flex;
+      }
+      .mobile-menu-btn {
+        display: block;
+      }
+      .hero h1 { font-size: 2.1rem; }
+      .hero p.tagline { font-size: 1.05rem; }
+      .prompts-grid { grid-template-columns: 1fr; }
+      .filter-bar { flex-direction: column; align-items: stretch; }
+      .card-actions { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div id="announceBar" class="announcement-bar">
+    <span id="announceText">🚀 Welcome to KHAN Prompts! Explore 100% free production-ready AI prompts updated regularly.</span>
+    <button class="announcement-close" onclick="closeAnnouncement()" title="Dismiss">&times;</button>
+  </div>
+
+  <!-- Realtime / Demo Status Banner -->
+  <div class="status-banner" id="cloudStatusBanner">
+    <span class="status-dot" id="cloudDot"></span>
+    <span id="cloudStatusText">Connecting to Supabase...</span>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand-logo" onclick="showPage('home')">
+        <span style="font-size: 1.6rem;">⚡</span>
+        <span class="brand-gradient" id="brandLogoText">KHAN PROMPTS</span>
+      </div>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a class="nav-link active" data-page="home" onclick="showPage('home')">Home</a></li>
+        <li><a class="nav-link" data-page="prompts" onclick="showPage('prompts')">All Prompts</a></li>
+        <li><a class="nav-link" data-page="contact" onclick="showPage('contact')">Contact & WhatsApp</a></li>
+        <li id="mySpaceNav" style="display: none;"><a class="nav-link" data-page="dashboard" onclick="showPage('dashboard')">My Space</a></li>
+        <li id="adminNav" style="display: none;"><a class="nav-link" data-page="adminPanel" onclick="showPage('adminPanel')">Admin Panel</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <!-- Theme Toggle -->
+        <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Toggle Light/Dark Theme">
+          <span id="themeIcon">🌙</span>
+        </button>
+
+        <!-- Auth Buttons Container -->
+        <div id="authActions">
+          <button class="btn btn-outline btn-sm" onclick="showPage('login')">Log In</button>
+          <button class="btn btn-primary btn-sm" onclick="showPage('signup')">Sign Up</button>
+        </div>
+
+        <!-- Mobile menu toggle -->
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()" title="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT SPA PAGES -->
+  <main>
+
+    <!-- 1. HOME PAGE -->
+    <section id="page-home" class="page-section active">
+      <!-- Hero -->
+      <div class="hero">
+        <div class="container hero-content">
+          <div class="hero-tag">
+            <span>✨</span> 100% Free AI Prompt Engineering Library
+          </div>
+          <h1 id="heroSiteName">KHAN Prompts</h1>
+          <p class="tagline" id="heroTagline">Curated Free AI Prompts for Creators, Coders & Visionaries</p>
+          
+          <!-- Instant Hero Search Bar -->
+          <div class="hero-search-box">
+            <span class="hero-search-icon">🔍</span>
+            <input 
+              type="text" 
+              class="hero-search-input" 
+              id="heroSearchInput" 
+              placeholder="Search Midjourney, ChatGPT, Coding, Marketing prompts..." 
+              onkeyup="handleHeroSearch(event)"
+            />
+          </div>
+
+          <!-- Real-Time Metric Stats -->
+          <div class="stats-row">
+            <div class="stat-card">
+              <span class="stat-number" id="statPrompts">0</span>
+              <span class="stat-label">Total Prompts</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" id="statUsers">0</span>
+              <span class="stat-label">Community Users</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" id="statCopies">0</span>
+              <span class="stat-label">Copies Made</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number" style="color: #10b981;">100%</span>
+              <span class="stat-label">Free Forever</span>
+            </div>
+          </div>
+
+          <!-- Quick Category Filters -->
+          <div class="category-pills" id="homeCategoryPills">
+            <!-- Injected dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Prompts Section -->
+      <div class="container" style="margin-top: 50px;">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <h2>⭐ Featured Masterpieces</h2>
+            <p>Hand-picked top tier prompts tested for maximum output quality</p>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="showPage('prompts')">View All Prompts →</button>
+        </div>
+
+        <div class="prompts-grid" id="featuredPromptsGrid">
+          <!-- Populated by renderFeaturedPrompts() -->
+        </div>
+      </div>
+
+      <!-- Latest Prompts Section -->
+      <div class="container" style="margin-top: 30px;">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <h2>⚡ Recently Added Prompts</h2>
+            <p>Fresh additions to elevate your generative workflow</p>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="showPage('prompts')">Browse Complete Library →</button>
+        </div>
+
+        <div class="prompts-grid" id="latestPromptsGrid">
+          <!-- Populated by renderLatestPrompts() -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. ALL PROMPTS PAGE -->
+    <section id="page-prompts" class="page-section">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <h2>All AI Prompts</h2>
+            <p>Search, filter, copy, and supercharge your AI workflows</p>
+          </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-bar">
+          <div class="filter-search">
+            <input 
+              type="text" 
+              class="input-field" 
+              id="promptFilterSearch" 
+              placeholder="Search by keywords or models..." 
+              oninput="applyPromptsFilters()"
+            />
+          </div>
+          <select class="filter-select" id="promptFilterCat" onchange="applyPromptsFilters()">
+            <option value="ALL">All Categories</option>
+          </select>
+          <select class="filter-select" id="promptFilterSort" onchange="applyPromptsFilters()">
+            <option value="newest">Sort: Newest</option>
+            <option value="az">Sort: A - Z</option>
+            <option value="popular">Sort: Most Viewed</option>
+            <option value="likes">Sort: Most Liked</option>
+            <option value="copies">Sort: Most Copied</option>
+          </select>
+        </div>
+
+        <!-- Grid -->
+        <div class="prompts-grid" id="allPromptsGrid"></div>
+
+        <!-- Load More Button -->
+        <div style="text-align: center; margin-top: 30px;" id="loadMoreContainer">
+          <button class="btn btn-outline" id="loadMoreBtn" onclick="loadMorePrompts()">Load More Prompts</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. CONTACT & WHATSAPP PAGE -->
+    <section id="page-contact" class="page-section">
+      <div class="container contact-wrapper">
+        <h2>Get In Touch</h2>
+        <p style="color: var(--muted); margin-top: 6px;">Have a question, prompt suggestion, or custom partnership request?</p>
+
+        <div class="contact-card">
+          <div class="contact-icon">💬</div>
+          <h3>Chat Direct On WhatsApp</h3>
+          <p style="color: var(--muted); max-width: 480px; margin: 12px auto 26px;">
+            Reach our founder and community team instantly on WhatsApp. We respond within a few hours.
+          </p>
+
+          <a id="contactWhatsAppLink" href="#" target="_blank" class="btn btn-gradient" style="font-size: 1.05rem; padding: 14px 32px;">
+            <span>📱</span> Connect on WhatsApp
+          </a>
+
+          <div class="contact-info-list">
+            <div class="contact-info-item">
+              <span style="font-size: 1.3rem;">📍</span>
+              <div>
+                <strong>Global Address:</strong>
+                <span id="contactAddressDisplay">Silicon Valley, CA & Worldwide</span>
+              </div>
+            </div>
+            <div class="contact-info-item">
+              <span style="font-size: 1.3rem;">✉️</span>
+              <div>
+                <strong>Official Email:</strong>
+                <span>support@khanprompts.com</span>
+              </div>
+            </div>
+            <div class="contact-info-item">
+              <span style="font-size: 1.3rem;">⚡</span>
+              <div>
+                <strong>Community Status:</strong>
+                <span style="color: #10b981; font-weight: 600;">Active & 100% Free Public Library</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. LOGIN PAGE -->
+    <section id="page-login" class="page-section">
+      <div class="container">
+        <div class="auth-card">
+          <h2>Welcome Back</h2>
+          <p>Log in to access your saved prompts space</p>
+
+          <form onsubmit="handleLogin(event)">
+            <div class="input-group">
+              <label class="input-label" for="loginEmail">Email Address</label>
+              <input type="email" class="input-field" id="loginEmail" required placeholder="you@example.com" />
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="loginPass">Password</label>
+              <input type="password" class="input-field" id="loginPass" required placeholder="••••••••" />
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Log In</button>
+          </form>
+
+          <p class="auth-footer-text">
+            Don't have an account? <a onclick="showPage('signup')">Sign Up Free</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. SIGNUP PAGE -->
+    <section id="page-signup" class="page-section">
+      <div class="container">
+        <div class="auth-card">
+          <h2>Create Your Account</h2>
+          <p>Join KHAN Prompts to bookmark and personalize your AI tools</p>
+
+          <form onsubmit="handleSignup(event)">
+            <div class="input-group">
+              <label class="input-label" for="signupName">Full Name</label>
+              <input type="text" class="input-field" id="signupName" required placeholder="Alexander Khan" />
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="signupEmail">Email Address</label>
+              <input type="email" class="input-field" id="signupEmail" required placeholder="you@example.com" />
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="signupPass">Password</label>
+              <input type="password" class="input-field" id="signupPass" required minlength="4" placeholder="••••••••" />
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Create Free Account</button>
+          </form>
+
+          <p class="auth-footer-text">
+            Already have an account? <a onclick="showPage('login')">Log In</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. DASHBOARD (MY SPACE) -->
+    <section id="page-dashboard" class="page-section">
+      <div class="container">
+        <div class="dashboard-header">
+          <div style="display: flex; align-items: center; gap: 18px;">
+            <div class="user-avatar-badge" id="dashUserAvatar">U</div>
+            <div>
+              <h2 id="dashWelcomeName">My Space</h2>
+              <p id="dashUserEmail" style="color: var(--muted); font-size: 0.92rem;">user@example.com</p>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="handleLogout()">Sign Out</button>
+        </div>
+
+        <div class="tabs-nav">
+          <button class="tab-btn active" onclick="switchDashTab('saved', this)">📌 Saved Prompts (<span id="savedCount">0</span>)</button>
+          <button class="tab-btn" onclick="switchDashTab('liked', this)">❤️ Liked Prompts (<span id="likedCount">0</span>)</button>
+        </div>
+
+        <!-- Dashboard Prompts Grid -->
+        <div class="prompts-grid" id="dashPromptsGrid"></div>
+      </div>
+    </section>
+
+    <!-- 7. ADMIN PANEL (HIDDEN/GATED) -->
+    <section id="page-adminPanel" class="page-section">
+      <div class="container">
+        <div class="admin-container">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h2>🛡️ Admin Management Suite</h2>
+              <p style="color: var(--muted); font-size: 0.9rem;">Configure site properties, manage prompt library, and export data</p>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="exitAdmin()">Exit Admin</button>
+          </div>
+
+          <!-- Admin Tabs -->
+          <div class="admin-tabs">
+            <button class="admin-tab-btn active" onclick="switchAdminTab('dash', this)">📊 Metrics</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('settings', this)">⚙️ Settings</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('manage', this)">📝 Manage Prompts</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('categories', this)">🏷️ Categories</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('users', this)">👥 Users</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('data', this)">💾 Data & Backup</button>
+          </div>
+
+          <!-- Tab 1: Admin Overview -->
+          <div id="admin-tab-dash" class="admin-tab-content active">
+            <div class="stats-row" style="margin-bottom: 30px;">
+              <div class="stat-card">
+                <span class="stat-number" id="adminStatPrompts">0</span>
+                <span class="stat-label">Active Prompts</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-number" id="adminStatViews">0</span>
+                <span class="stat-label">Total Views</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-number" id="adminStatCopies">0</span>
+                <span class="stat-label">Total Copies</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-number" id="adminStatLikes">0</span>
+                <span class="stat-label">Total Likes</span>
+              </div>
+            </div>
+
+            <div style="background: var(--code-bg); padding: 18px; border-radius: 14px; border: 1px solid var(--border);">
+              <h4 style="margin-bottom: 8px;">Supabase Database Status</h4>
+              <p id="adminDbStatusText" style="color: var(--muted); font-size: 0.9rem;">Checking connection...</p>
+            </div>
+          </div>
+
+          <!-- Tab 2: Site Settings -->
+          <div id="admin-tab-settings" class="admin-tab-content">
+            <form onsubmit="saveAdminSettings(event)">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                <div class="input-group">
+                  <label class="input-label">Site Name</label>
+                  <input type="text" class="input-field" id="setSiteName" required />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Tagline</label>
+                  <input type="text" class="input-field" id="setTagline" required />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Primary Color (#HEX)</label>
+                  <input type="text" class="input-field" id="setPrimaryColor" required />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">WhatsApp Number (e.g. 1234567890)</label>
+                  <input type="text" class="input-field" id="setWhatsApp" required />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Physical / Business Address</label>
+                  <input type="text" class="input-field" id="setAddress" required />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Logo Style</label>
+                  <select class="input-field" id="setLogoStyle">
+                    <option value="gradient">Gradient Text</option>
+                    <option value="solid">Solid Primary</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="input-group">
+                <label class="input-label">Announcement Banner Text</label>
+                <input type="text" class="input-field" id="setAnnounceText" />
+              </div>
+
+              <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="setAnnounceOn" style="width: 18px; height: 18px; accent-color: var(--primary);" />
+                <label for="setAnnounceOn" style="font-size: 0.95rem; font-weight: 500; cursor: pointer;">Enable Announcement Banner</label>
+              </div>
+
+              <!-- Supabase Cloud Connection Inputs -->
+              <div style="margin-top: 20px; padding: 20px; border-radius: 14px; background: var(--code-bg); border: 1px solid var(--border); margin-bottom: 24px;">
+                <h4 style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                  <span>☁️</span> Supabase Cloud Database Connection
+                </h4>
+                <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 14px;">
+                  Configure your credentials here or directly inside <code>.env</code> / <code>env.js</code>.
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+                  <div class="input-group" style="margin-bottom: 0;">
+                    <label class="input-label">Supabase Project URL</label>
+                    <input type="url" class="input-field" id="setSupabaseUrl" placeholder="https://xyzcompany.supabase.co" />
+                  </div>
+                  <div class="input-group" style="margin-bottom: 0;">
+                    <label class="input-label">Supabase Anon Public API Key</label>
+                    <input type="password" class="input-field" id="setSupabaseKey" placeholder="eyJhbGciOiJIUzI1NiIsIn..." />
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary">Save Settings</button>
+            </form>
+          </div>
+
+          <!-- Tab 3: Manage Prompts -->
+          <div id="admin-tab-manage" class="admin-tab-content">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+              <input type="text" class="input-field" id="adminManageSearch" placeholder="Search prompts in database..." style="max-width: 320px;" oninput="renderAdminPromptsTable()" />
+              <button class="btn btn-primary btn-sm" onclick="openPromptFormModal()">+ Add New Prompt</button>
+            </div>
+
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Featured</th>
+                    <th>Status</th>
+                    <th>Views</th>
+                    <th>Copies</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="adminPromptsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab 4: Categories -->
+          <div id="admin-tab-categories" class="admin-tab-content">
+            <div style="max-width: 500px; margin-bottom: 24px;">
+              <div class="input-group">
+                <label class="input-label">Add Category</label>
+                <div style="display: flex; gap: 10px;">
+                  <input type="text" class="input-field" id="newCategoryInput" placeholder="e.g., SEO & Content" />
+                  <button class="btn btn-primary" onclick="handleAddCategory()">Add</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-table-wrap" style="max-width: 600px;">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Category Name</th>
+                    <th>Prompts Count</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="adminCategoriesTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab 5: Users -->
+          <div id="admin-tab-users" class="admin-tab-content">
+            <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 16px;">
+              Local community users registered in this browser application.
+            </p>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Joined</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="adminUsersTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab 6: Data & Backup -->
+          <div id="admin-tab-data" class="admin-tab-content">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+              <div>
+                <h4>Export Prompts JSON</h4>
+                <p style="color: var(--muted); font-size: 0.88rem; margin: 8px 0 14px;">
+                  Download or copy a complete JSON snapshot of all prompts in the database.
+                </p>
+                <div style="display: flex; gap: 10px;">
+                  <button class="btn btn-outline btn-sm" onclick="exportPromptsJSON()">Copy JSON to Clipboard</button>
+                  <button class="btn btn-primary btn-sm" onclick="downloadPromptsJSON()">Download File</button>
+                </div>
+              </div>
+
+              <div>
+                <h4>Import JSON / Bulk Insert</h4>
+                <p style="color: var(--muted); font-size: 0.88rem; margin: 8px 0 14px;">
+                  Paste a JSON array of prompts to bulk import into Supabase.
+                </p>
+                <textarea class="input-field" id="importJSONArea" placeholder='[{"title":"...","prompt_text":"...","category":"..."}]'></textarea>
+                <div style="margin-top: 10px; display: flex; gap: 10px;">
+                  <button class="btn btn-primary btn-sm" onclick="handleImportJSON()">Bulk Import</button>
+                  <button class="btn btn-ghost btn-sm" style="color: #ef4444;" onclick="resetToSampleData()">Reset to Demo Defaults</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand-logo footer-logo-secret" id="secretFooterLogo" onclick="handleFooterSecretClick()" title="KHAN Prompts">
+            <span style="font-size: 1.4rem;">⚡</span>
+            <span class="brand-gradient" id="footerLogoText">KHAN PROMPTS</span>
+          </div>
+          <p style="color: var(--muted); font-size: 0.9rem; margin-top: 12px; max-width: 380px;">
+            The world's premier open library of production-ready AI prompts. Curated for developers, creators, marketers, and researchers.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a onclick="showPage('home')">Home</a></li>
+            <li><a onclick="showPage('prompts')">All Prompts</a></li>
+            <li><a onclick="showPage('contact')">WhatsApp Support</a></li>
+            <li><a onclick="showPage('dashboard')">My Space</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Categories</h4>
+          <ul class="footer-links" id="footerCategoriesList">
+            <li><a onclick="filterByCategory('Marketing')">Marketing</a></li>
+            <li><a onclick="filterByCategory('Art')">Art & Visuals</a></li>
+            <li><a onclick="filterByCategory('Coding')">Coding & Dev</a></li>
+            <li><a onclick="filterByCategory('Business')">Business & Strategy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; <span id="currentYear"></span> <span id="footerSiteName">KHAN Prompts</span>. All rights reserved. 100% Free Forever.</div>
+        <div>
+          <span style="color: var(--muted); font-size: 0.8rem;">Powered by Outfit + Supabase</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================
+       MODALS
+       ========================================================== -->
+
+  <!-- 1. Prompt Full View Modal -->
+  <div class="modal-overlay" id="promptViewModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span class="badge badge-category" id="modalPromptCategory">Category</span>
+          <h3 class="modal-title" id="modalPromptTitle" style="margin-top: 6px;">Prompt Title</h3>
+        </div>
+        <button class="modal-close" onclick="closeModal('promptViewModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="modalPromptDesc" style="color: var(--muted); font-size: 0.95rem; margin-bottom: 16px;"></p>
+        
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Prompt Blueprint</span>
+          <button class="btn btn-outline btn-sm" id="modalCopyBtn" onclick="modalCopyAction()">📋 Copy Prompt</button>
+        </div>
+        
+        <div class="modal-prompt-box" id="modalPromptText"></div>
+
+        <div class="card-meta" style="margin-top: 20px; padding-top: 16px;">
+          <div class="meta-metrics">
+            <span class="metric-item">👁️ <span id="modalViews">0</span> views</span>
+            <span class="metric-item">📋 <span id="modalCopies">0</span> copies</span>
+            <span class="metric-item">❤️ <span id="modalLikes">0</span> likes</span>
+          </div>
+          <span id="modalDate" style="font-size: 0.8rem;">Recently Added</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="modalSaveBtn" onclick="modalSaveAction()">🔖 Save Prompt</button>
+        <button class="btn btn-gradient" id="modalWhatsAppBtn" onclick="modalWhatsAppAction()">💬 Share on WhatsApp</button>
+        <button class="btn btn-primary" onclick="modalCopyAction()">Copy Full Prompt</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Admin Gate PIN Modal -->
+  <div class="modal-overlay" id="adminAuthModal">
+    <div class="modal-card" style="max-width: 380px;">
+      <div class="modal-header">
+        <h3 class="modal-title">🔐 Admin Verification</h3>
+        <button class="modal-close" onclick="closeModal('adminAuthModal')">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 18px;">
+          Enter your 4-digit administrator passcode to access the management suite.
+        </p>
+        <form onsubmit="handleAdminAuth(event)">
+          <div class="input-group">
+            <input 
+              type="password" 
+              class="input-field" 
+              id="adminPassInput" 
+              maxlength="10" 
+              required 
+              autofocus 
+              placeholder="Enter PIN" 
+              style="font-size: 1.4rem; text-align: center; letter-spacing: 6px;" 
+            />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Unlock Admin</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Add / Edit Prompt Modal (Admin) -->
+  <div class="modal-overlay" id="promptFormModal">
+    <div class="modal-card" style="max-width: 640px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="promptFormTitle">Add New Prompt</h3>
+        <button class="modal-close" onclick="closeModal('promptFormModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="promptCrudForm" onsubmit="handlePromptFormSubmit(event)">
+          <input type="hidden" id="formPromptId" />
+          
+          <div class="input-group">
+            <label class="input-label">Prompt Title</label>
+            <input type="text" class="input-field" id="formTitle" required placeholder="e.g. Masterful Midjourney Portrait" />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="input-group">
+              <label class="input-label">Category</label>
+              <select class="input-field" id="formCategory" required></select>
+            </div>
+            <div class="input-group">
+              <label class="input-label">Image URL (Optional)</label>
+              <input type="url" class="input-field" id="formImage" placeholder="https://images.unsplash.com/..." />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Short Description</label>
+            <input type="text" class="input-field" id="formDesc" placeholder="Brief summary of what this prompt accomplishes..." />
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">Full Prompt Instructions</label>
+            <textarea class="input-field" id="formPromptText" rows="6" required placeholder="Paste the exact prompt text with parameters..."></textarea>
+          </div>
+
+          <div style="display: flex; gap: 24px; margin-top: 14px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="formFeatured" style="width: 18px; height: 18px; accent-color: var(--primary);" />
+              <span style="font-size: 0.92rem; font-weight: 600;">Featured</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="formActive" checked style="width: 18px; height: 18px; accent-color: var(--primary);" />
+              <span style="font-size: 0.92rem; font-weight: 600;">Active (Visible to Public)</span>
+            </label>
+          </div>
+
+          <div class="modal-footer" style="padding: 20px 0 0; margin-top: 20px;">
+            <button type="button" class="btn btn-outline" onclick="closeModal('promptFormModal')">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="promptFormSubmitBtn">Save Prompt</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Layer -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ==========================================================
+       VANILLA JAVASCRIPT APPLICATION LOGIC
+       ========================================================== -->
+  <script>
+    // ==========================================================
+    // 1. CONFIGURATION & SUPABASE INITIALIZATION
+    // ==========================================================
+    // Priority order:
+    // 1. window.ENV (from env.js or .env)
+    // 2. localStorage ("khan_supabase_url", "khan_supabase_key")
+    // 3. Inlined placeholders
+    let SUPABASE_URL = (window.ENV && window.ENV.SUPABASE_URL && window.ENV.SUPABASE_URL !== "YOUR_SUPABASE_URL" ? window.ENV.SUPABASE_URL : null)
+      || localStorage.getItem("khan_supabase_url")
+      || "YOUR_SUPABASE_URL";
+
+    let SUPABASE_ANON_KEY = (window.ENV && window.ENV.SUPABASE_ANON_KEY && window.ENV.SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY" ? window.ENV.SUPABASE_ANON_KEY : null)
+      || localStorage.getItem("khan_supabase_key")
+      || "YOUR_SUPABASE_ANON_KEY";
+
+    let supabaseClient = null;
+    let isSupabaseConfigured = false;
+
+    // Initialize Supabase Client
+    function initSupabaseClient() {
+      try {
+        if (SUPABASE_URL && SUPABASE_URL !== "YOUR_SUPABASE_URL" && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY" && window.supabase) {
+          supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          isSupabaseConfigured = true;
+          return true;
+        }
+      } catch (e) {
+        console.warn("Supabase init notice:", e);
+      }
+      isSupabaseConfigured = false;
+      return false;
+    }
+
+    initSupabaseClient();
+
+    // Default Seed Fallback Data (Guarantees immediate zero-error preview before credentials are typed)
+    const DEFAULT_PROMPTS = [
+      {
+        id: "d1a10001-0000-4000-8000-000000000001",
+        title: "Hyper-Realistic Cinematic Portrait Master",
+        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80",
+        description: "Craft award-winning 8K photorealistic human portraits with cinematic lighting, depth of field, and photochemistry color grading.",
+        prompt_text: "A cinematic studio portrait of an elderly artisan with deep expressive eyes and weathered features, hands sculpting intricate clay, dramatic Rembrandt lighting with warm amber rim light, shot on 35mm anamorphic lens, f/1.4 aperture, subtle film grain, 8K resolution, octane render, photorealistic, shallow depth of field --ar 16:9 --v 6.0 --style raw",
+        category: "Art",
+        featured: true,
+        active: true,
+        views: 420,
+        copies: 188,
+        likes: 94,
+        created_at: new Date(Date.now() - 3600000 * 24).toISOString()
+      },
+      {
+        id: "d1a10001-0000-4000-8000-000000000002",
+        title: "Viral LinkedIn Hook & Thought Leadership Carousel",
+        image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=800&q=80",
+        description: "Generate high-engagement viral B2B LinkedIn carousels and thought leadership posts engineered with proven psychological hooks.",
+        prompt_text: "Act as a world-class B2B content strategist who has generated 50M+ views on LinkedIn. I need a 7-slide carousel breakdown about [TOPIC/INDUSTRY CHALLENGE]. Format requirements:\n1. Slide 1 (The Hook): A contrarian opening headline that stops the scroll (max 10 words).\n2. Slide 2 (The Hidden Cost): Explain why the standard way people do this is failing.\n3. Slide 3-5 (The Framework): Give a step-by-step 3-part blueprint with clear actionable examples.\n4. Slide 6 (Case in Point): A quick 2-sentence transformation story.\n5. Slide 7 (CTA): A conversational call to action encouraging saves and reposts. Tone: Authoritative, concise, devoid of buzzwords.",
+        category: "Marketing",
+        featured: true,
+        active: true,
+        views: 630,
+        copies: 275,
+        likes: 142,
+        created_at: new Date(Date.now() - 3600000 * 18).toISOString()
+      },
+      {
+        id: "d1a10001-0000-4000-8000-000000000003",
+        title: "Production Code Refactor & Unit Test Suite Generator",
+        image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+        description: "Transform legacy spaghetti code into clean SOLID architecture complete with comprehensive edge-case test suites.",
+        prompt_text: "Act as a Principal Software Engineer. Review the following code snippet for [LANGUAGE/FRAMEWORK]:\n\n```[PASTE CODE HERE]```\n\nTasks:\n1. Identify performance bottlenecks, potential race conditions, and architectural code smells.\n2. Provide an optimized, refactored version adhering strictly to SOLID principles, DRY, and modern idiomatic syntax.\n3. Add clean inline docstrings explaining non-trivial logic.\n4. Write a comprehensive unit test suite covering happy paths, null safety, boundary limits, and edge case failures using standard test assertions.",
+        category: "Coding",
+        featured: true,
+        active: true,
+        views: 890,
+        copies: 412,
+        likes: 215,
+        created_at: new Date(Date.now() - 3600000 * 8).toISOString()
+      },
+      {
+        id: "d1a10001-0000-4000-8000-000000000004",
+        title: "SaaS Go-To-Market Pitch & Value Proposition Architect",
+        image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
+        description: "Develop an investor-ready pitch, clear positioning statement, and customer objection matrix for any B2B/B2C SaaS product.",
+        prompt_text: "Act as an elite Y-Combinator venture partner and product marketing executive. Help me develop the positioning and Go-To-Market strategy for my software product: [BRIEF PRODUCT DESCRIPTION].\n\nDeliver:\n1. One-Sentence Elevator Pitch (The Steve Jobs style simplicity).\n2. Problem Statement: Quantify the financial and operational pain of our ideal customer persona.\n3. Value Wedge: 3 unfair advantages why we beat existing incumbents and spreadsheets.\n4. Objection Handling Matrix: Top 5 buyer objections and concise counter-arguments for enterprise sales demos.\n5. 30-Day Launch Roadmap focusing on organic acquisition channels.",
+        category: "Business",
+        featured: false,
+        active: true,
+        views: 315,
+        copies: 140,
+        likes: 67,
+        created_at: new Date(Date.now() - 3600000 * 4).toISOString()
+      }
+    ];
+
+    const DEFAULT_CATEGORIES = ["Marketing", "Art", "Writing", "Business", "Coding"];
+
+    const DEFAULT_SETTINGS = {
+      site_name: "KHAN Prompts",
+      tagline: "Curated Free AI Prompts for Creators, Coders & Visionaries",
+      primary_color: "#7c3aed",
+      whatsapp: "1234567890",
+      address: "Silicon Valley, CA & Worldwide",
+      announce: "🔥 Welcome to KHAN Prompts! Explore 100% free production-ready AI prompts updated regularly.",
+      announce_on: true,
+      logo_style: "gradient"
+    };
+
+    // State Variables
+    let appPrompts = [];
+    let appCategories = [];
+    let appSettings = { ...DEFAULT_SETTINGS };
+    let filteredPrompts = [];
+    let promptsPageLimit = 9;
+    let activeModalPrompt = null;
+    let footerClickCount = 0;
+    let footerClickTimer = null;
+
+    // Auto-load .env when running on localhost HTTP/HTTPS server
+    async function tryLoadDotEnv() {
+      if (isSupabaseConfigured) return;
+      if (!window.location.protocol.startsWith("http")) return;
+      try {
+        const res = await fetch(".env");
+        if (res.ok) {
+          const text = await res.text();
+          let parsedUrl = null;
+          let parsedKey = null;
+          const lines = text.split("\n");
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (trimmed.startsWith("#") || !trimmed.includes("=")) continue;
+            const [k, ...v] = trimmed.split("=");
+            const keyName = k.trim();
+            const val = v.join("=").trim().replace(/^["']|["']$/g, "");
+            if (keyName === "SUPABASE_URL" && val && val !== "YOUR_SUPABASE_URL") parsedUrl = val;
+            if (keyName === "SUPABASE_ANON_KEY" && val && val !== "YOUR_SUPABASE_ANON_KEY") parsedKey = val;
+          }
+          if (parsedUrl && parsedKey) {
+            SUPABASE_URL = parsedUrl;
+            SUPABASE_ANON_KEY = parsedKey;
+            if (initSupabaseClient()) {
+              console.log("Connected to Supabase via .env file");
+            }
+          }
+        }
+      } catch (err) {}
+    }
+
+    // ==========================================================
+    // 2. LIFECYCLE & INITIALIZATION
+    // ==========================================================
+    document.addEventListener("DOMContentLoaded", async () => {
+      initTheme();
+      updateAuthUI();
+      document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+      // Check hash routing for direct page or admin access
+      handleHashChange();
+      window.addEventListener("hashchange", handleHashChange);
+
+      // Attempt .env file auto-load if running over http
+      await tryLoadDotEnv();
+
+      // Load initial state
+      await loadAppSettings();
+      await loadCategories();
+      await loadPrompts();
+
+      // Setup Realtime listener if Supabase is connected
+      setupRealtime();
+    });
+
+    function handleHashChange() {
+      const hash = window.location.hash;
+      if (hash === "#admin") {
+        checkAdminAccess();
+      } else if (hash.startsWith("#prompt-")) {
+        const pId = hash.replace("#prompt-", "");
+        setTimeout(() => openModal(pId), 400);
+      }
+    }
+
+    // ==========================================================
+    // 3. THEME MANAGEMENT
+    // ==========================================================
+    function initTheme() {
+      const savedTheme = localStorage.getItem("khan_theme") || "dark";
+      applyTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute("data-theme") || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      applyTheme(next);
+      localStorage.setItem("khan_theme", next);
+      toast(`Switched to ${next} mode 🌓`);
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      const icon = document.getElementById("themeIcon");
+      if (icon) icon.textContent = theme === "dark" ? "🌙" : "☀️";
+    }
+
+    // ==========================================================
+    // 4. DATA SYNCHRONIZATION (SUPABASE & LOCAL FALLBACK)
+    // ==========================================================
+    async function loadAppSettings() {
+      let loaded = false;
+      if (isSupabaseConfigured && supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient.from("app_settings").select("*").limit(1).maybeSingle();
+          if (!error && data) {
+            appSettings = { ...appSettings, ...data };
+            loaded = true;
+          }
+        } catch (err) {
+          console.warn("Failed fetching settings from Supabase, using local defaults", err);
+        }
+      }
+
+      if (!loaded) {
+        const local = localStorage.getItem("khan_settings");
+        if (local) {
+          try { appSettings = JSON.parse(local); } catch(e){}
+        }
+      }
+
+      applySettingsToUI();
+    }
+
+    function applySettingsToUI() {
+      // Colors
+      if (appSettings.primary_color) {
+        document.documentElement.style.setProperty("--primary", appSettings.primary_color);
+      }
+
+      // Announcement
+      const announceBar = document.getElementById("announceBar");
+      const announceText = document.getElementById("announceText");
+      if (announceText) announceText.textContent = appSettings.announce || DEFAULT_SETTINGS.announce;
+      if (announceBar) {
+        if (appSettings.announce_on === false) {
+          announceBar.classList.add("hidden");
+        } else {
+          announceBar.classList.remove("hidden");
+        }
+      }
+
+      // Brand text
+      const siteName = appSettings.site_name || "KHAN Prompts";
+      const brandLogoText = document.getElementById("brandLogoText");
+      const footerLogoText = document.getElementById("footerLogoText");
+      const heroSiteName = document.getElementById("heroSiteName");
+      const heroTagline = document.getElementById("heroTagline");
+      const footerSiteName = document.getElementById("footerSiteName");
+
+      if (brandLogoText) brandLogoText.textContent = siteName;
+      if (footerLogoText) footerLogoText.textContent = siteName;
+      if (heroSiteName) heroSiteName.textContent = siteName;
+      if (footerSiteName) footerSiteName.textContent = siteName;
+      if (heroTagline) heroTagline.textContent = appSettings.tagline || DEFAULT_SETTINGS.tagline;
+
+      // Contact Page Info
+      const waNumber = (appSettings.whatsapp || "1234567890").replace(/\D/g, "");
+      const waLink = document.getElementById("contactWhatsAppLink");
+      if (waLink) {
+        waLink.href = `https://wa.me/${waNumber}?text=${encodeURIComponent("Hello KHAN Prompts team! I have an inquiry:")}`;
+      }
+      const addressDisplay = document.getElementById("contactAddressDisplay");
+      if (addressDisplay) addressDisplay.textContent = appSettings.address || DEFAULT_SETTINGS.address;
+
+      // Update form fields if admin is open
+      const sNameInput = document.getElementById("setSiteName");
+      if (sNameInput) {
+        sNameInput.value = appSettings.site_name || "";
+        document.getElementById("setTagline").value = appSettings.tagline || "";
+        document.getElementById("setPrimaryColor").value = appSettings.primary_color || "#7c3aed";
+        document.getElementById("setWhatsApp").value = appSettings.whatsapp || "";
+        document.getElementById("setAddress").value = appSettings.address || "";
+        document.getElementById("setAnnounceText").value = appSettings.announce || "";
+        document.getElementById("setAnnounceOn").checked = appSettings.announce_on !== false;
+        document.getElementById("setLogoStyle").value = appSettings.logo_style || "gradient";
+
+        const sbUrlInput = document.getElementById("setSupabaseUrl");
+        if (sbUrlInput) {
+          sbUrlInput.value = (SUPABASE_URL !== "YOUR_SUPABASE_URL" ? SUPABASE_URL : "") || localStorage.getItem("khan_supabase_url") || "";
+          document.getElementById("setSupabaseKey").value = (SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY" ? SUPABASE_ANON_KEY : "") || localStorage.getItem("khan_supabase_key") || "";
+        }
+      }
+    }
+
+    function closeAnnouncement() {
+      const announceBar = document.getElementById("announceBar");
+      if (announceBar) announceBar.classList.add("hidden");
+    }
+
+    async function loadCategories() {
+      let categories = [];
+      if (isSupabaseConfigured && supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient.from("categories").select("*").order("name");
+          if (!error && data && data.length > 0) {
+            categories = data.map(c => c.name);
+          }
+        } catch (err) {
+          console.warn("Supabase categories fetch error", err);
+        }
+      }
+
+      if (categories.length === 0) {
+        const local = localStorage.getItem("khan_categories");
+        if (local) {
+          try { categories = JSON.parse(local); } catch(e){}
+        }
+      }
+
+      if (categories.length === 0) {
+        categories = [...DEFAULT_CATEGORIES];
+      }
+
+      appCategories = Array.from(new Set(categories));
+      populateCategoryUI();
+    }
+
+    function populateCategoryUI() {
+      // Home quick pills
+      const pillsContainer = document.getElementById("homeCategoryPills");
+      if (pillsContainer) {
+        pillsContainer.innerHTML = `
+          <button class="pill-btn active" onclick="filterByCategory('ALL', this)">All Prompts</button>
+          ${appCategories.map(cat => `
+            <button class="pill-btn" onclick="filterByCategory('${cat}', this)">${cat}</button>
+          `).join("")}
+        `;
+      }
+
+      // Prompts page dropdown
+      const filterCatSelect = document.getElementById("promptFilterCat");
+      if (filterCatSelect) {
+        filterCatSelect.innerHTML = `
+          <option value="ALL">All Categories</option>
+          ${appCategories.map(c => `<option value="${c}">${c}</option>`).join("")}
+        `;
+      }
+
+      // Admin prompt form category dropdown
+      const formCatSelect = document.getElementById("formCategory");
+      if (formCatSelect) {
+        formCatSelect.innerHTML = appCategories.map(c => `<option value="${c}">${c}</option>`).join("");
+      }
+
+      // Admin categories table
+      renderAdminCategoriesTable();
+    }
+
+    async function loadPrompts() {
+      updateStatusBanner("loading", "Connecting to database...");
+
+      let prompts = [];
+      if (isSupabaseConfigured && supabaseClient) {
+        try {
+          const { data, error } = await supabaseClient
+            .from("prompts")
+            .select("*")
+            .order("created_at", { ascending: false });
+
+          if (!error && data) {
+            prompts = data;
+            updateStatusBanner("connected", "Connected to Supabase Cloud Database");
+          } else {
+            console.warn("Supabase prompts query error", error);
+            updateStatusBanner("demo", "Connected in Demo Mode (Local Fallback)");
+          }
+        } catch (err) {
+          console.warn("Supabase prompts exception", err);
+          updateStatusBanner("demo", "Connected in Demo Mode (Local Fallback)");
+        }
+      } else {
+        updateStatusBanner("demo", "Demo Mode • Configure SUPABASE_URL & ANON_KEY to sync cloud");
+      }
+
+      if (prompts.length === 0) {
+        const local = localStorage.getItem("khan_prompts");
+        if (local) {
+          try { prompts = JSON.parse(local); } catch(e){}
+        }
+      }
+
+      if (prompts.length === 0) {
+        prompts = [...DEFAULT_PROMPTS];
+        localStorage.setItem("khan_prompts", JSON.stringify(prompts));
+      }
+
+      appPrompts = prompts;
+      renderAllPromptSections();
+    }
+
+    function updateStatusBanner(state, message) {
+      const dot = document.getElementById("cloudDot");
+      const text = document.getElementById("cloudStatusText");
+      if (!dot || !text) return;
+
+      text.textContent = message;
+      if (state === "connected") {
+        dot.className = "status-dot";
+      } else if (state === "demo") {
+        dot.className = "status-dot warn";
+      } else {
+        dot.className = "status-dot";
+      }
+    }
+
+    function setupRealtime() {
+      if (!isSupabaseConfigured || !supabaseClient) return;
+      try {
+        supabaseClient
+          .channel("db-changes")
+          .on("postgres_changes", { event: "*", schema: "public", table: "prompts" }, (payload) => {
+            console.log("Realtime payload received from Supabase:", payload);
+            loadPrompts();
+          })
+          .subscribe();
+      } catch (err) {
+        console.warn("Realtime subscription setup skipped:", err);
+      }
+    }
+
+    // ==========================================================
+    // 5. RENDERING PROMPT CARDS & GRIDS
+    // ==========================================================
+    function renderAllPromptSections() {
+      updateMetricCounters();
+      renderFeaturedPrompts();
+      renderLatestPrompts();
+      applyPromptsFilters();
+      if (document.getElementById("page-dashboard").classList.contains("active")) {
+        renderDashboardPrompts();
+      }
+      if (document.getElementById("page-adminPanel").classList.contains("active")) {
+        renderAdminPromptsTable();
+      }
+    }
+
+    function updateMetricCounters() {
+      const totalPrompts = appPrompts.filter(p => p.active !== false).length;
+      const totalCopies = appPrompts.reduce((acc, p) => acc + (p.copies || 0), 0);
+      const totalViews = appPrompts.reduce((acc, p) => acc + (p.views || 0), 0);
+      const totalLikes = appPrompts.reduce((acc, p) => acc + (p.likes || 0), 0);
+
+      // Local users count
+      let usersCount = 142; // base demo count
+      try {
+        const users = JSON.parse(localStorage.getItem("khan_users") || "[]");
+        usersCount += users.length;
+      } catch(e){}
+
+      animateCounter("statPrompts", totalPrompts);
+      animateCounter("statUsers", usersCount);
+      animateCounter("statCopies", totalCopies);
+
+      // Admin stats
+      const aPrompts = document.getElementById("adminStatPrompts");
+      if (aPrompts) {
+        aPrompts.textContent = totalPrompts;
+        document.getElementById("adminStatViews").textContent = totalViews.toLocaleString();
+        document.getElementById("adminStatCopies").textContent = totalCopies.toLocaleString();
+        document.getElementById("adminStatLikes").textContent = totalLikes.toLocaleString();
+        document.getElementById("adminDbStatusText").textContent = isSupabaseConfigured 
+          ? "✅ Active Supabase Cloud Connection. Realtime updates enabled."
+          : "⚠️ Running on browser localStorage fallback. Set SUPABASE_URL & ANON_KEY for shared cloud sync.";
+      }
+    }
+
+    function animateCounter(elementId, target) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      el.textContent = target.toLocaleString();
+    }
+
+    function renderFeaturedPrompts() {
+      const grid = document.getElementById("featuredPromptsGrid");
+      if (!grid) return;
+
+      const featured = appPrompts.filter(p => p.active !== false && p.featured).slice(0, 3);
+      if (featured.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><span class="empty-icon">⭐</span><p>No featured prompts yet.</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = featured.map(p => cardHTML(p)).join("");
+    }
+
+    function renderLatestPrompts() {
+      const grid = document.getElementById("latestPromptsGrid");
+      if (!grid) return;
+
+      const latest = appPrompts.filter(p => p.active !== false).slice(0, 6);
+      if (latest.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><span class="empty-icon">🔍</span><p>No prompts found.</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = latest.map(p => cardHTML(p)).join("");
+    }
+
+    // Single Card HTML Generator
+    function cardHTML(p) {
+      const fallbackImg = "data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22400%22%20height%3D%22220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%237c3aed%22%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23ec4899%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22url(%23g)%22%20opacity%3D%220.25%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2218%22%20font-weight%3D%22bold%22%20text-anchor%3D%22middle%22%20dy%3D%22.3em%22%3EKHAN%20PROMPTS%3C%2Ftext%3E%3C%2Fsvg%3E";
+      const imgSrc = p.image || fallbackImg;
+      
+      const snippet = (p.prompt_text || "").substring(0, 120) + ((p.prompt_text || "").length > 120 ? "..." : "");
+      
+      const isLiked = isPromptLiked(p.id);
+      const isSaved = isPromptSaved(p.id);
+
+      return `
+        <div class="prompt-card" id="card-${p.id}">
+          <div class="card-thumb-wrapper">
+            <img 
+              src="${imgSrc}" 
+              class="card-thumb" 
+              alt="${escapeHtml(p.title)}" 
+              loading="lazy"
+              onerror="this.onerror=null;this.src='${fallbackImg}';"
+            />
+            <div class="card-badges">
+              <span class="badge badge-free">FREE</span>
+              ${p.featured ? `<span class="badge badge-featured">★ FEATURED</span>` : ''}
+            </div>
+            <div class="card-cat-badge">
+              <span class="badge badge-category">${escapeHtml(p.category || 'General')}</span>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <h3 class="card-title" onclick="openModal('${p.id}')" title="Click to view prompt">${escapeHtml(p.title)}</h3>
+            <p class="card-desc">${escapeHtml(p.description || '')}</p>
+
+            <div class="prompt-preview-box" onclick="openModal('${p.id}')" title="Click to view full prompt">
+              ${escapeHtml(snippet)}
+            </div>
+
+            <div class="card-meta">
+              <div class="meta-metrics">
+                <span class="metric-item">👁️ ${p.views || 0}</span>
+                <span class="metric-item">📋 ${p.copies || 0}</span>
+                <span class="metric-item">❤️ <span id="likes-count-${p.id}">${p.likes || 0}</span></span>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <button class="btn btn-primary btn-sm" onclick="copyPrompt('${p.id}')" title="Copy Prompt to Clipboard">
+                <span>📋</span> Copy
+              </button>
+              <button class="btn btn-outline btn-sm ${isSaved ? 'save-active' : ''}" id="save-btn-${p.id}" onclick="saveForUser('${p.id}')" title="Save to My Space">
+                <span>🔖</span>
+              </button>
+              <button class="btn btn-outline btn-sm ${isLiked ? 'like-active' : ''}" id="like-btn-${p.id}" onclick="likePrompt('${p.id}')" title="Like Prompt">
+                <span>❤️</span>
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="sharePrompt('${p.id}')" title="Share">
+                <span>🔗</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ==========================================================
+    // 6. PROMPT MODAL, COPY, LIKE, SAVE & SHARE
+    // ==========================================================
+    async function openModal(promptId) {
+      const prompt = appPrompts.find(p => p.id === promptId);
+      if (!prompt) return;
+
+      activeModalPrompt = prompt;
+
+      // Populate Modal Content
+      document.getElementById("modalPromptTitle").textContent = prompt.title;
+      document.getElementById("modalPromptCategory").textContent = prompt.category || "General";
+      document.getElementById("modalPromptDesc").textContent = prompt.description || "";
+      document.getElementById("modalPromptText").textContent = prompt.prompt_text || "";
+      document.getElementById("modalViews").textContent = (prompt.views || 0) + 1;
+      document.getElementById("modalCopies").textContent = prompt.copies || 0;
+      document.getElementById("modalLikes").textContent = prompt.likes || 0;
+
+      const dateStr = prompt.created_at ? new Date(prompt.created_at).toLocaleDateString() : "Recently Added";
+      document.getElementById("modalDate").textContent = `Added: ${dateStr}`;
+
+      // Update Save button state
+      const isSaved = isPromptSaved(prompt.id);
+      const modalSaveBtn = document.getElementById("modalSaveBtn");
+      if (modalSaveBtn) {
+        modalSaveBtn.innerHTML = isSaved ? "🔖 Saved in My Space" : "🔖 Save Prompt";
+        modalSaveBtn.className = isSaved ? "btn btn-outline save-active" : "btn btn-outline";
+      }
+
+      // Show Modal
+      const modal = document.getElementById("promptViewModal");
+      modal.classList.add("open");
+
+      // Increment Views (in memory + Supabase)
+      prompt.views = (prompt.views || 0) + 1;
+      if (isSupabaseConfigured && supabaseClient) {
+        try {
+          await supabaseClient.from("prompts").update({ views: prompt.views }).eq("id", prompt.id);
+        } catch(e){}
+      } else {
+        savePromptsToLocalStorage();
+      }
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.classList.remove("open");
+    }
+
+    // Click outside modal card to close
+    document.querySelectorAll(".modal-overlay").forEach(overlay => {
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) {
+          overlay.classList.remove("open");
+        }
+      });
+    });
+
+    async function copyPrompt(promptId) {
+      const p = appPrompts.find(item => item.id === promptId);
+      if (!p) return;
+
+      try {
+        await navigator.clipboard.writeText(p.prompt_text);
+        toast("Prompt copied to clipboard! 🎉");
+
+        // Increment copies count
+        p.copies = (p.copies || 0) + 1;
+        
+        // Update Supabase or Local
+        if (isSupabaseConfigured && supabaseClient) {
+          await supabaseClient.from("prompts").update({ copies: p.copies }).eq("id", p.id);
+        } else {
+          savePromptsToLocalStorage();
+        }
+
+        updateMetricCounters();
+        renderAllPromptSections();
+      } catch (err) {
+        // Fallback copy
+        fallbackCopyTextToClipboard(p.prompt_text);
+        toast("Prompt copied to clipboard! 🎉");
+      }
+    }
+
+    function modalCopyAction() {
+      if (activeModalPrompt) {
+        copyPrompt(activeModalPrompt.id);
+      }
+    }
+
+    function fallbackCopyTextToClipboard(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+      } catch (err) {}
+      document.body.removeChild(textArea);
+    }
+
+    async function likePrompt(promptId) {
+      const p = appPrompts.find(item => item.id === promptId);
+      if (!p) return;
+
+      const userKey = getCurrentUserEmail() || "guest_device";
+      const storageKey = `liked_${userKey}`;
+      let likedList = [];
+      try {
+        likedList = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      } catch(e){}
+
+      const hasLiked = likedList.includes(promptId);
+
+      if (hasLiked) {
+        // Unlike
+        likedList = likedList.filter(id => id !== promptId);
+        p.likes = Math.max(0, (p.likes || 0) - 1);
+        toast("Prompt removed from liked ❤️");
+      } else {
+        // Like
+        likedList.push(promptId);
+        p.likes = (p.likes || 0) + 1;
+        toast("Added to your liked prompts! ❤️");
+      }
+
+      localStorage.setItem(storageKey, JSON.stringify(likedList));
+
+      // Persist to Supabase / Local
+      if (isSupabaseConfigured && supabaseClient) {
+        try {
+          await supabaseClient.from("prompts").update({ likes: p.likes }).eq("id", p.id);
+        } catch(e){}
+      } else {
+        savePromptsToLocalStorage();
+      }
+
+      renderAllPromptSections();
+    }
+
+    function isPromptLiked(promptId) {
+      const userKey = getCurrentUserEmail() || "guest_device";
+      try {
+        const likedList = JSON.parse(localStorage.getItem(`liked_${userKey}`) || "[]");
+        return likedList.includes(promptId);
+      } catch(e){
+        return false;
+      }
+    }
+
+    function saveForUser(promptId) {
+      const session = getCurrentSession();
+      if (!session) {
+        toast("Please log in to save prompts to your space! 🔒");
+        showPage("login");
+        return;
+      }
+
+      const storageKey = `saved_${session.email}`;
+      let savedList = [];
+      try {
+        savedList = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      } catch(e){}
+
+      const hasSaved = savedList.includes(promptId);
+
+      if (hasSaved) {
+        savedList = savedList.filter(id => id !== promptId);
+        toast("Removed prompt from your saved list 📌");
+      } else {
+        savedList.push(promptId);
+        toast("Saved prompt to your space! 📌");
+      }
+
+      localStorage.setItem(storageKey, JSON.stringify(savedList));
+      renderAllPromptSections();
+    }
+
+    function modalSaveAction() {
+      if (activeModalPrompt) {
+        saveForUser(activeModalPrompt.id);
+        const isSaved = isPromptSaved(activeModalPrompt.id);
+        const modalSaveBtn = document.getElementById("modalSaveBtn");
+        if (modalSaveBtn) {
+          modalSaveBtn.innerHTML = isSaved ? "🔖 Saved in My Space" : "🔖 Save Prompt";
+          modalSaveBtn.className = isSaved ? "btn btn-outline save-active" : "btn btn-outline";
+        }
+      }
+    }
+
+    function isPromptSaved(promptId) {
+      const session = getCurrentSession();
+      if (!session) return false;
+      try {
+        const savedList = JSON.parse(localStorage.getItem(`saved_${session.email}`) || "[]");
+        return savedList.includes(promptId);
+      } catch(e){
+        return false;
+      }
+    }
+
+    async function sharePrompt(promptId) {
+      const p = appPrompts.find(item => item.id === promptId);
+      if (!p) return;
+
+      const shareUrl = `${window.location.origin}${window.location.pathname}#prompt-${p.id}`;
+      const shareData = {
+        title: `${p.title} - KHAN Prompts`,
+        text: `${p.title}\n${p.description}\n\nCheck out this prompt on KHAN Prompts:`,
+        url: shareUrl
+      };
+
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+          return;
+        } catch (e) {}
+      }
+
+      // Fallback: Copy link
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toast("Direct link copied to clipboard! 🔗");
+      } catch(err) {
+        fallbackCopyTextToClipboard(shareUrl);
+        toast("Direct link copied to clipboard! 🔗");
+      }
+    }
+
+    function modalWhatsAppAction() {
+      if (!activeModalPrompt) return;
+      const shareUrl = `${window.location.origin}${window.location.pathname}#prompt-${activeModalPrompt.id}`;
+      const msg = `*${activeModalPrompt.title}*\n${activeModalPrompt.description}\n\nTry this AI prompt for free at KHAN Prompts:\n${shareUrl}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // ==========================================================
+    // 7. SEARCH, FILTER & SORT
+    // ==========================================================
+    function handleHeroSearch(event) {
+      if (event.key === "Enter" || event.type === "click") {
+        const query = document.getElementById("heroSearchInput").value.trim();
+        showPage("prompts");
+        const filterInput = document.getElementById("promptFilterSearch");
+        if (filterInput) {
+          filterInput.value = query;
+          applyPromptsFilters();
+        }
+      }
+    }
+
+    function filterByCategory(categoryName, btnElement) {
+      showPage("prompts");
+      const catSelect = document.getElementById("promptFilterCat");
+      if (catSelect) {
+        catSelect.value = categoryName;
+        applyPromptsFilters();
+      }
+
+      if (btnElement) {
+        document.querySelectorAll(".pill-btn").forEach(b => b.classList.remove("active"));
+        btnElement.classList.add("active");
+      }
+    }
+
+    function applyPromptsFilters() {
+      const searchInput = (document.getElementById("promptFilterSearch")?.value || "").toLowerCase().trim();
+      const category = document.getElementById("promptFilterCat")?.value || "ALL";
+      const sort = document.getElementById("promptFilterSort")?.value || "newest";
+
+      let list = appPrompts.filter(p => p.active !== false);
+
+      // Category filter
+      if (category !== "ALL") {
+        list = list.filter(p => (p.category || "").toLowerCase() === category.toLowerCase());
+      }
+
+      // Search keyword filter
+      if (searchInput) {
+        list = list.filter(p => 
+          (p.title || "").toLowerCase().includes(searchInput) ||
+          (p.description || "").toLowerCase().includes(searchInput) ||
+          (p.prompt_text || "").toLowerCase().includes(searchInput) ||
+          (p.category || "").toLowerCase().includes(searchInput)
+        );
+      }
+
+      // Sort
+      if (sort === "az") {
+        list.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+      } else if (sort === "popular") {
+        list.sort((a, b) => (b.views || 0) - (a.views || 0));
+      } else if (sort === "likes") {
+        list.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+      } else if (sort === "copies") {
+        list.sort((a, b) => (b.copies || 0) - (a.copies || 0));
+      } else {
+        // newest
+        list.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+      }
+
+      filteredPrompts = list;
+      renderPromptsPageGrid();
+    }
+
+    function renderPromptsPageGrid() {
+      const grid = document.getElementById("allPromptsGrid");
+      const loadMoreContainer = document.getElementById("loadMoreContainer");
+      if (!grid) return;
+
+      if (filteredPrompts.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1/-1;">
+            <span class="empty-icon">🔍</span>
+            <h3>No matching prompts found</h3>
+            <p style="margin-top: 6px;">Try adjusting your search terms or category filter.</p>
+          </div>
+        `;
+        if (loadMoreContainer) loadMoreContainer.style.display = "none";
+        return;
+      }
+
+      const visibleSlice = filteredPrompts.slice(0, promptsPageLimit);
+      grid.innerHTML = visibleSlice.map(p => cardHTML(p)).join("");
+
+      if (loadMoreContainer) {
+        if (promptsPageLimit < filteredPrompts.length) {
+          loadMoreContainer.style.display = "block";
+        } else {
+          loadMoreContainer.style.display = "none";
+        }
+      }
+    }
+
+    function loadMorePrompts() {
+      promptsPageLimit += 6;
+      renderPromptsPageGrid();
+    }
+
+    // ==========================================================
+    // 8. SPA NAVIGATION (showPage)
+    // ==========================================================
+    function showPage(pageId) {
+      // Hide all pages
+      document.querySelectorAll(".page-section").forEach(sec => {
+        sec.classList.remove("active");
+      });
+
+      // Show target page
+      const target = document.getElementById(`page-${pageId}`);
+      if (target) {
+        target.classList.add("active");
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Update Nav active indicator
+      document.querySelectorAll(".nav-link").forEach(link => {
+        if (link.getAttribute("data-page") === pageId) {
+          link.classList.add("active");
+        } else {
+          link.classList.remove("active");
+        }
+      });
+
+      // Close mobile menu if open
+      const navLinks = document.getElementById("navLinks");
+      if (navLinks) navLinks.classList.remove("mobile-open");
+
+      // Page-specific setup
+      if (pageId === "dashboard") {
+        renderDashboardPrompts();
+      } else if (pageId === "adminPanel") {
+        checkAdminAccess();
+      }
+    }
+
+    function toggleMobileNav() {
+      const navLinks = document.getElementById("navLinks");
+      if (navLinks) navLinks.classList.toggle("mobile-open");
+    }
+
+    // ==========================================================
+    // 9. AUTHENTICATION (LOCALSTORAGE MVP)
+    // ==========================================================
+    function getCurrentSession() {
+      try {
+        return JSON.parse(localStorage.getItem("khan_session"));
+      } catch(e) {
+        return null;
+      }
+    }
+
+    function getCurrentUserEmail() {
+      const session = getCurrentSession();
+      return session ? session.email : null;
+    }
+
+    function updateAuthUI() {
+      const session = getCurrentSession();
+      const authActions = document.getElementById("authActions");
+      const mySpaceNav = document.getElementById("mySpaceNav");
+      const adminNav = document.getElementById("adminNav");
+
+      const isAdmin = localStorage.getItem("khan_admin") === "true";
+      if (adminNav) adminNav.style.display = isAdmin ? "block" : "none";
+
+      if (session) {
+        if (mySpaceNav) mySpaceNav.style.display = "block";
+        if (authActions) {
+          authActions.innerHTML = `
+            <button class="btn btn-outline btn-sm" onclick="showPage('dashboard')" title="My Space">
+              <span>👤</span> ${escapeHtml(session.name.split(" ")[0])}
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="handleLogout()" title="Log Out">
+              Sign Out
+            </button>
+          `;
+        }
+      } else {
+        if (mySpaceNav) mySpaceNav.style.display = "none";
+        if (authActions) {
+          authActions.innerHTML = `
+            <button class="btn btn-outline btn-sm" onclick="showPage('login')">Log In</button>
+            <button class="btn btn-primary btn-sm" onclick="showPage('signup')">Sign Up</button>
+          `;
+        }
+      }
+    }
+
+    function handleSignup(event) {
+      event.preventDefault();
+      const name = document.getElementById("signupName").value.trim();
+      const email = document.getElementById("signupEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("signupPass").value;
+
+      if (!name || !email || !pass) {
+        toast("Please fill in all fields");
+        return;
+      }
+
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem("khan_users") || "[]");
+      } catch(e){}
+
+      if (users.find(u => u.email === email)) {
+        toast("An account with this email already exists!");
+        return;
+      }
+
+      const newUser = {
+        name,
+        email,
+        pass,
+        created_at: new Date().toISOString()
+      };
+
+      users.push(newUser);
+      localStorage.setItem("khan_users", JSON.stringify(users));
+
+      // Auto login
+      const session = { name, email, loggedInAt: Date.now() };
+      localStorage.setItem("khan_session", JSON.stringify(session));
+
+      updateAuthUI();
+      updateMetricCounters();
+      toast(`Welcome aboard, ${name}! 🎉`);
+      showPage("dashboard");
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("loginPass").value;
+
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem("khan_users") || "[]");
+      } catch(e){}
+
+      const user = users.find(u => u.email === email && u.pass === pass);
+
+      if (user) {
+        const session = { name: user.name, email: user.email, loggedInAt: Date.now() };
+        localStorage.setItem("khan_session", JSON.stringify(session));
+        updateAuthUI();
+        toast(`Welcome back, ${user.name}! 👋`);
+        showPage("dashboard");
+      } else {
+        // If no user exists yet in localStorage, create a quick demo session for simplicity
+        if (users.length === 0) {
+          const defaultUser = { name: email.split("@")[0], email, pass, created_at: new Date().toISOString() };
+          users.push(defaultUser);
+          localStorage.setItem("khan_users", JSON.stringify(users));
+          localStorage.setItem("khan_session", JSON.stringify({ name: defaultUser.name, email, loggedInAt: Date.now() }));
+          updateAuthUI();
+          toast(`Account created & logged in! Welcome! 🎉`);
+          showPage("dashboard");
+          return;
+        }
+        toast("Invalid email or password. Please try again.");
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem("khan_session");
+      updateAuthUI();
+      toast("You have been signed out.");
+      showPage("home");
+    }
+
+    // ==========================================================
+    // 10. DASHBOARD (MY SPACE)
+    // ==========================================================
+    let currentDashTab = "saved";
+
+    function switchDashTab(tabName, btn) {
+      currentDashTab = tabName;
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      renderDashboardPrompts();
+    }
+
+    function renderDashboardPrompts() {
+      const session = getCurrentSession();
+      if (!session) {
+        showPage("login");
+        return;
+      }
+
+      document.getElementById("dashUserAvatar").textContent = session.name ? session.name.charAt(0).toUpperCase() : "U";
+      document.getElementById("dashWelcomeName").textContent = `Welcome, ${session.name}`;
+      document.getElementById("dashUserEmail").textContent = session.email;
+
+      // Saved prompts list
+      let savedIds = [];
+      try {
+        savedIds = JSON.parse(localStorage.getItem(`saved_${session.email}`) || "[]");
+      } catch(e){}
+
+      // Liked prompts list
+      let likedIds = [];
+      try {
+        likedIds = JSON.parse(localStorage.getItem(`liked_${session.email}`) || "[]");
+      } catch(e){}
+
+      document.getElementById("savedCount").textContent = savedIds.length;
+      document.getElementById("likedCount").textContent = likedIds.length;
+
+      const grid = document.getElementById("dashPromptsGrid");
+      if (!grid) return;
+
+      const targetIds = currentDashTab === "saved" ? savedIds : likedIds;
+      const targetPrompts = appPrompts.filter(p => targetIds.includes(p.id));
+
+      if (targetPrompts.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1/-1;">
+            <span class="empty-icon">${currentDashTab === 'saved' ? '🔖' : '❤️'}</span>
+            <h3>No ${currentDashTab} prompts yet</h3>
+            <p style="margin-top: 6px;">Browse the library and tap the ${currentDashTab === 'saved' ? 'bookmark' : 'heart'} button to collect your favorite prompts.</p>
+            <button class="btn btn-primary btn-sm" style="margin-top: 16px;" onclick="showPage('prompts')">Browse Prompts</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = targetPrompts.map(p => cardHTML(p)).join("");
+    }
+
+    // ==========================================================
+    // 11. ADMIN GATE & MANAGEMENT SUITE
+    // ==========================================================
+    function handleFooterSecretClick() {
+      footerClickCount++;
+      clearTimeout(footerClickTimer);
+      footerClickTimer = setTimeout(() => { footerClickCount = 0; }, 2000);
+
+      if (footerClickCount >= 5) {
+        footerClickCount = 0;
+        checkAdminAccess();
+      }
+    }
+
+    function checkAdminAccess() {
+      const isAdmin = localStorage.getItem("khan_admin") === "true";
+      if (isAdmin) {
+        showPage("adminPanel");
+        renderAdminPromptsTable();
+        renderAdminCategoriesTable();
+        renderAdminUsersTable();
+      } else {
+        const modal = document.getElementById("adminAuthModal");
+        if (modal) modal.classList.add("open");
+        const input = document.getElementById("adminPassInput");
+        if (input) {
+          input.value = "";
+          setTimeout(() => input.focus(), 200);
+        }
+      }
+    }
+
+    function handleAdminAuth(event) {
+      event.preventDefault();
+      const input = document.getElementById("adminPassInput").value.trim();
+      if (input === "2572") {
+        localStorage.setItem("khan_admin", "true");
+        closeModal("adminAuthModal");
+        updateAuthUI();
+        toast("Admin unlocked! Welcome, Administrator 🛡️");
+        showPage("adminPanel");
+        renderAdminPromptsTable();
+        renderAdminCategoriesTable();
+        renderAdminUsersTable();
+      } else {
+        toast("Incorrect Passcode. Access Denied ❌");
+      }
+    }
+
+    function exitAdmin() {
+      localStorage.removeItem("khan_admin");
+      updateAuthUI();
+      toast("Exited Admin Mode.");
+      showPage("home");
+    }
+
+    function switchAdminTab(tabId, btn) {
+      document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".admin-tab-content").forEach(c => c.classList.remove("active"));
+
+      if (btn) btn.classList.add("active");
+      const content = document.getElementById(`admin-tab-${tabId}`);
+      if (content) content.classList.add("active");
+    }
+
+    async function saveAdminSettings(event) {
+      event.preventDefault();
+      appSettings.site_name = document.getElementById("setSiteName").value.trim();
+      appSettings.tagline = document.getElementById("setTagline").value.trim();
+      appSettings.primary_color = document.getElementById("setPrimaryColor").value.trim();
+      appSettings.whatsapp = document.getElementById("setWhatsApp").value.trim();
+      appSettings.address = document.getElementById("setAddress").value.trim();
+      appSettings.announce = document.getElementById("setAnnounceText").value.trim();
+      appSettings.announce_on = document.getElementById("setAnnounceOn").checked;
+      appSettings.logo_style = document.getElementById("setLogoStyle").value;
+
+      // Handle Supabase credentials from form
+      const newSbUrl = document.getElementById("setSupabaseUrl")?.value.trim();
+      const newSbKey = document.getElementById("setSupabaseKey")?.value.trim();
+      if (newSbUrl && newSbKey) {
+        localStorage.setItem("khan_supabase_url", newSbUrl);
+        localStorage.setItem("khan_supabase_key", newSbKey);
+        SUPABASE_URL = newSbUrl;
+        SUPABASE_ANON_KEY = newSbKey;
+        if (initSupabaseClient()) {
+          toast("Supabase credentials updated! Connecting... ☁️");
+          await loadPrompts();
+          setupRealtime();
+        }
+      }
+
+      // Save locally
+      localStorage.setItem("khan_settings", JSON.stringify(appSettings));
+
+      // Save to Supabase
+      if (isSupabaseConfigured && supabaseClient) {
+        try {
+          await supabaseClient.from("app_settings").upsert({
+            id: 1,
+            site_name: appSettings.site_name,
+            tagline: appSettings.tagline,
+            primary_color: appSettings.primary_color,
+            whatsapp: appSettings.whatsapp,
+            address: appSettings.address,
+            announce: appSettings.announce,
+            announce_on: appSettings.announce_on,
+            logo_style: appSettings.logo_style,
+            updated_at: new Date().toISOString()
+          });
+          toast("Settings synced with Supabase! ☁️");
+        } catch (err) {
+          toast("Saved locally (Supabase update error)");
+        }
+      } else {
+        toast("Settings saved locally! ✨");
+      }
+
+      applySettingsToUI();
+    }
+
+    // Admin Manage Prompts Table
+    function renderAdminPromptsTable() {
+      const tbody = document.getElementById("adminPromptsTableBody");
+      if (!tbody) return;
+
+      const filterTerm = (document.getElementById("adminManageSearch")?.value || "").toLowerCase().trim();
+      let list = [...appPrompts];
+      if (filterTerm) {
+        list = list.filter(p => (p.title || "").toLowerCase().includes(filterTerm) || (p.category || "").toLowerCase().includes(filterTerm));
+      }
+
+      tbody.innerHTML = list.map(p => `
+        <tr>
+          <td>
+            <strong>${escapeHtml(p.title)}</strong>
+          </td>
+          <td><span class="badge badge-category">${escapeHtml(p.category || 'General')}</span></td>
+          <td>${p.featured ? '⭐ Yes' : 'No'}</td>
+          <td>
+            <span style="color: ${p.active !== false ? '#10b981' : '#ef4444'}; font-weight: 700;">
+              ${p.active !== false ? 'Active' : 'Hidden'}
+            </span>
+          </td>
+          <td>${p.views || 0}</td>
+          <td>${p.copies || 0}</td>
+          <td>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-outline btn-sm" onclick="editPromptModal('${p.id}')">Edit</button>
+              <button class="btn btn-outline btn-sm" onclick="togglePromptActive('${p.id}')">${p.active !== false ? 'Hide' : 'Show'}</button>
+              <button class="btn btn-outline btn-sm" style="color:#ef4444; border-color:#ef4444;" onclick="deletePrompt('${p.id}')">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function openPromptFormModal(promptData = null) {
+      document.getElementById("formPromptId").value = promptData ? promptData.id : "";
+      document.getElementById("formTitle").value = promptData ? promptData.title : "";
+      document.getElementById("formCategory").value = promptData ? promptData.category : (appCategories[0] || "Marketing");
+      document.getElementById("formImage").value = promptData ? promptData.image || "" : "";
+      document.getElementById("formDesc").value = promptData ? promptData.description || "" : "";
+      document.getElementById("formPromptText").value = promptData ? promptData.prompt_text : "";
+      document.getElementById("formFeatured").checked = promptData ? !!promptData.featured : false;
+      document.getElementById("formActive").checked = promptData ? promptData.active !== false : true;
+
+      document.getElementById("promptFormTitle").textContent = promptData ? "Edit Prompt" : "Add New Prompt";
+      document.getElementById("promptFormSubmitBtn").textContent = promptData ? "Update Prompt" : "Publish Prompt";
+
+      const modal = document.getElementById("promptFormModal");
+      if (modal) modal.classList.add("open");
+    }
+
+    function editPromptModal(promptId) {
+      const p = appPrompts.find(item => item.id === promptId);
+      if (p) openPromptFormModal(p);
+    }
+
+    async function handlePromptFormSubmit(event) {
+      event.preventDefault();
+      const pId = document.getElementById("formPromptId").value;
+      const title = document.getElementById("formTitle").value.trim();
+      const category = document.getElementById("formCategory").value;
+      const image = document.getElementById("formImage").value.trim();
+      const description = document.getElementById("formDesc").value.trim();
+      const prompt_text = document.getElementById("formPromptText").value.trim();
+      const featured = document.getElementById("formFeatured").checked;
+      const active = document.getElementById("formActive").checked;
+
+      const payload = {
+        title,
+        category,
+        image,
+        description,
+        prompt_text,
+        featured,
+        active
+      };
+
+      if (pId) {
+        // Edit existing prompt
+        const index = appPrompts.findIndex(p => p.id === pId);
+        if (index !== -1) {
+          appPrompts[index] = { ...appPrompts[index], ...payload };
+        }
+
+        if (isSupabaseConfigured && supabaseClient) {
+          await supabaseClient.from("prompts").update(payload).eq("id", pId);
+        }
+        toast("Prompt updated successfully! ✨");
+      } else {
+        // Add new prompt
+        const newPrompt = {
+          id: generateUUID(),
+          ...payload,
+          views: 0,
+          copies: 0,
+          likes: 0,
+          created_at: new Date().toISOString()
+        };
+
+        appPrompts.unshift(newPrompt);
+
+        if (isSupabaseConfigured && supabaseClient) {
+          await supabaseClient.from("prompts").insert([newPrompt]);
+        }
+        toast("New prompt published! 🚀");
+      }
+
+      savePromptsToLocalStorage();
+      renderAllPromptSections();
+      closeModal("promptFormModal");
+    }
+
+    async function togglePromptActive(promptId) {
+      const p = appPrompts.find(item => item.id === promptId);
+      if (!p) return;
+
+      p.active = p.active === false ? true : false;
+
+      if (isSupabaseConfigured && supabaseClient) {
+        await supabaseClient.from("prompts").update({ active: p.active }).eq("id", p.id);
+      } else {
+        savePromptsToLocalStorage();
+      }
+
+      toast(`Prompt is now ${p.active ? 'Visible' : 'Hidden'}`);
+      renderAllPromptSections();
+    }
+
+    async function deletePrompt(promptId) {
+      if (!confirm("Are you sure you want to permanently delete this prompt?")) return;
+
+      appPrompts = appPrompts.filter(p => p.id !== promptId);
+
+      if (isSupabaseConfigured && supabaseClient) {
+        await supabaseClient.from("prompts").delete().eq("id", promptId);
+      } else {
+        savePromptsToLocalStorage();
+      }
+
+      toast("Prompt deleted.");
+      renderAllPromptSections();
+    }
+
+    function savePromptsToLocalStorage() {
+      localStorage.setItem("khan_prompts", JSON.stringify(appPrompts));
+    }
+
+    // Admin Categories
+    function renderAdminCategoriesTable() {
+      const tbody = document.getElementById("adminCategoriesTableBody");
+      if (!tbody) return;
+
+      tbody.innerHTML = appCategories.map(cat => {
+        const count = appPrompts.filter(p => (p.category || "").toLowerCase() === cat.toLowerCase()).length;
+        return `
+          <tr>
+            <td><strong>${escapeHtml(cat)}</strong></td>
+            <td>${count} prompts</td>
+            <td>
+              <button class="btn btn-outline btn-sm" style="color: #ef4444;" onclick="deleteCategory('${cat}')">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function handleAddCategory() {
+      const input = document.getElementById("newCategoryInput");
+      const name = input.value.trim();
+      if (!name) return;
+
+      if (appCategories.includes(name)) {
+        toast("Category already exists");
+        return;
+      }
+
+      appCategories.push(name);
+      localStorage.setItem("khan_categories", JSON.stringify(appCategories));
+
+      if (isSupabaseConfigured && supabaseClient) {
+        try {
+          await supabaseClient.from("categories").insert([{ name }]);
+        } catch(e){}
+      }
+
+      input.value = "";
+      populateCategoryUI();
+      toast(`Category "${name}" added!`);
+    }
+
+    async function deleteCategory(name) {
+      if (!confirm(`Delete category "${name}"?`)) return;
+
+      appCategories = appCategories.filter(c => c !== name);
+      localStorage.setItem("khan_categories", JSON.stringify(appCategories));
+
+      if (isSupabaseConfigured && supabaseClient) {
+        try {
+          await supabaseClient.from("categories").delete().eq("name", name);
+        } catch(e){}
+      }
+
+      populateCategoryUI();
+      toast(`Category deleted`);
+    }
+
+    // Admin Users Table
+    function renderAdminUsersTable() {
+      const tbody = document.getElementById("adminUsersTableBody");
+      if (!tbody) return;
+
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem("khan_users") || "[]");
+      } catch(e){}
+
+      if (users.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--muted); padding: 20px;">No registered users yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = users.map(u => `
+        <tr>
+          <td><strong>${escapeHtml(u.name)}</strong></td>
+          <td>${escapeHtml(u.email)}</td>
+          <td>${u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A'}</td>
+          <td>
+            <button class="btn btn-outline btn-sm" style="color:#ef4444;" onclick="deleteUser('${u.email}')">Delete User</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function deleteUser(email) {
+      if (!confirm(`Remove user ${email}?`)) return;
+
+      let users = JSON.parse(localStorage.getItem("khan_users") || "[]");
+      users = users.filter(u => u.email !== email);
+      localStorage.setItem("khan_users", JSON.stringify(users));
+
+      // Clear session if current
+      const current = getCurrentSession();
+      if (current && current.email === email) {
+        localStorage.removeItem("khan_session");
+        updateAuthUI();
+      }
+
+      renderAdminUsersTable();
+      updateMetricCounters();
+      toast("User deleted.");
+    }
+
+    // Data Tab: Import / Export
+    function exportPromptsJSON() {
+      const jsonStr = JSON.stringify(appPrompts, null, 2);
+      navigator.clipboard.writeText(jsonStr);
+      toast("Prompts JSON copied to clipboard! 📋");
+    }
+
+    function downloadPromptsJSON() {
+      const jsonStr = JSON.stringify(appPrompts, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `khan_prompts_backup_${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast("Backup file downloaded! 💾");
+    }
+
+    async function handleImportJSON() {
+      const raw = document.getElementById("importJSONArea").value.trim();
+      if (!raw) {
+        toast("Please paste valid JSON data.");
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) {
+          toast("JSON must be an array of prompt objects.");
+          return;
+        }
+
+        // Clean & inject UUIDs if missing
+        const formatted = parsed.map(item => ({
+          id: item.id || generateUUID(),
+          title: item.title || "Untitled Prompt",
+          image: item.image || "",
+          description: item.description || "",
+          prompt_text: item.prompt_text || "",
+          category: item.category || "General",
+          featured: !!item.featured,
+          active: item.active !== false,
+          views: item.views || 0,
+          copies: item.copies || 0,
+          likes: item.likes || 0,
+          created_at: item.created_at || new Date().toISOString()
+        }));
+
+        appPrompts = [...formatted, ...appPrompts];
+        savePromptsToLocalStorage();
+
+        // Bulk insert to Supabase if active
+        if (isSupabaseConfigured && supabaseClient) {
+          await supabaseClient.from("prompts").insert(formatted);
+          toast(`Imported ${formatted.length} prompts to Supabase Cloud! ☁️`);
+        } else {
+          toast(`Imported ${formatted.length} prompts to local store! 💾`);
+        }
+
+        renderAllPromptSections();
+        document.getElementById("importJSONArea").value = "";
+      } catch (err) {
+        toast("Invalid JSON format. Check syntax.");
+      }
+    }
+
+    function resetToSampleData() {
+      if (!confirm("Reset prompts and categories to original demo defaults?")) return;
+      appPrompts = [...DEFAULT_PROMPTS];
+      appCategories = [...DEFAULT_CATEGORIES];
+      savePromptsToLocalStorage();
+      localStorage.setItem("khan_categories", JSON.stringify(appCategories));
+      populateCategoryUI();
+      renderAllPromptSections();
+      toast("Reset completed successfully.");
+    }
+
+    // ==========================================================
+    // 12. UTILITY HELPERS
+    // ==========================================================
+    function toast(msg) {
+      const container = document.getElementById("toastContainer");
+      if (!container) return;
+
+      const t = document.createElement("div");
+      t.className = "toast";
+      t.innerHTML = `<span>⚡</span> <span>${escapeHtml(msg)}</span>`;
+      container.appendChild(t);
+
+      setTimeout(() => {
+        t.style.opacity = "0";
+        t.style.transform = "translateY(10px)";
+        t.style.transition = "all 0.25s ease";
+        setTimeout(() => t.remove(), 250);
+      }, 3200);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function generateUUID() {
+      if (crypto.randomUUID) return crypto.randomUUID();
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+  </script>
+</body>
+</html>
