@@ -400,31 +400,6 @@
       flex: 1;
     }
 
-    /* Demo Mode Banner Notice */
-    .status-banner {
-      background: rgba(124, 58, 237, 0.12);
-      border-bottom: 1px solid rgba(124, 58, 237, 0.25);
-      padding: 6px 16px;
-      font-size: 0.8rem;
-      text-align: center;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #10b981;
-    }
-
-    .status-dot.warn {
-      background: #f59e0b;
-    }
-
     /* ==========================================================
        HERO SECTION
        ========================================================== */
@@ -1307,27 +1282,121 @@
       .filter-bar { flex-direction: column; align-items: stretch; }
       .card-actions { flex-wrap: wrap; }
     }
+
+    /* ==========================================================
+       UI POLISH PACK — icons, brand mark, responsive, accessibility
+       ========================================================== */
+    html { scroll-behavior: smooth; }
+
+    .icon { width: 1.05em; height: 1.05em; vertical-align: -0.16em; }
+
+    .brand-mark {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 10px; flex: none;
+      background: var(--accent-gradient); color: #fff;
+      font-weight: 800; font-size: 1.15rem;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .empty-icon .icon { width: 3rem; height: 3rem; opacity: 0.55; }
+    .contact-icon .icon { width: 1.8rem; height: 1.8rem; }
+    .metric-item { display: inline-flex; align-items: center; gap: 5px; }
+
+    /* Settings: color picker cards */
+    .color-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px; margin: 6px 0 20px;
+    }
+    .color-field {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border: 1px solid var(--border);
+      border-radius: 12px; background: var(--bg-surface);
+    }
+    .color-field input[type="color"] {
+      width: 38px; height: 38px; border: none; border-radius: 8px;
+      background: none; padding: 0; cursor: pointer; flex: none;
+    }
+    .color-field label { font-size: 0.82rem; font-weight: 600; color: var(--muted); display: block; }
+    .color-field .hex { font-size: 0.76rem; color: var(--muted); font-family: monospace; }
+
+    .settings-section-title {
+      font-size: 1rem; font-weight: 700; margin: 22px 0 12px;
+      padding-top: 18px; border-top: 1px solid var(--border);
+    }
+    .settings-section-title:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+
+    :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    .card-title {
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .card-desc {
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+
+    /* Upload preview */
+    #formImagePreviewWrap img { display: block; }
+
+    @media (max-width: 768px) {
+      .modal-card { width: calc(100% - 24px); margin: 12px; max-height: calc(100vh - 24px); overflow-y: auto; }
+      .card-body { padding: 16px; }
+      .admin-table-wrap { overflow-x: auto; }
+      .announcement-bar { padding: 8px 34px 8px 12px; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 0 14px; }
+      .hero { padding: 44px 0 32px; }
+      .hero h1 { font-size: 1.75rem; }
+      .hero p.tagline { font-size: 0.98rem; }
+      .prompts-grid { grid-template-columns: 1fr; gap: 18px; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .card-actions .btn { flex: 1 1 auto; justify-content: center; }
+      .announcement-bar { font-size: 0.76rem; }
+      .footer-grid { gap: 22px; }
+      .admin-tabs { overflow-x: auto; flex-wrap: nowrap; }
+      .admin-tab-btn { white-space: nowrap; }
+    }
   </style>
 </head>
 <body>
 
+  <!-- Inline SVG icon set (clean, no emojis) -->
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+    <defs>
+      <symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></g></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></g></symbol>
+      <symbol id="i-bookmark" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></g></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></g></symbol>
+      <symbol id="i-link" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></g></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></g></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></g></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></g></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></g></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></g></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></g></symbol>
+      <symbol id="i-chat" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></g></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></g></symbol>
+      <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></g></symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></g></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></g></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></g></symbol>
+    </defs>
+  </svg>
+
   <!-- Announcement Bar -->
   <div id="announceBar" class="announcement-bar">
-    <span id="announceText">🚀 Welcome to KHAN Prompts! Explore 100% free production-ready AI prompts updated regularly.</span>
+    <span id="announceText">Welcome to KHAN Prompts! Explore 100% free production-ready AI prompts updated regularly.</span>
     <button class="announcement-close" onclick="closeAnnouncement()" title="Dismiss">&times;</button>
-  </div>
-
-  <!-- Realtime / Demo Status Banner -->
-  <div class="status-banner" id="cloudStatusBanner">
-    <span class="status-dot" id="cloudDot"></span>
-    <span id="cloudStatusText">Connecting to Supabase...</span>
   </div>
 
   <!-- Header Navigation -->
   <header class="navbar">
     <div class="nav-container">
       <div class="brand-logo" onclick="showPage('home')">
-        <span style="font-size: 1.6rem;">⚡</span>
+        <span class="brand-mark">K</span>
         <span class="brand-gradient" id="brandLogoText">KHAN PROMPTS</span>
       </div>
 
@@ -1342,7 +1411,7 @@
       <div class="nav-actions">
         <!-- Theme Toggle -->
         <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Toggle Light/Dark Theme">
-          <span id="themeIcon">🌙</span>
+          <svg class="icon" aria-hidden="true"><use id="themeIconUse" href="#i-moon"/></svg>
         </button>
 
         <!-- Auth Buttons Container -->
@@ -1352,7 +1421,7 @@
         </div>
 
         <!-- Mobile menu toggle -->
-        <button class="mobile-menu-btn" onclick="toggleMobileNav()" title="Menu">☰</button>
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()" title="Menu" aria-label="Menu"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg></button>
       </div>
     </div>
   </header>
@@ -1366,14 +1435,14 @@
       <div class="hero">
         <div class="container hero-content">
           <div class="hero-tag">
-            <span>✨</span> 100% Free AI Prompt Engineering Library
+            100% Free AI Prompt Engineering Library
           </div>
           <h1 id="heroSiteName">KHAN Prompts</h1>
           <p class="tagline" id="heroTagline">Curated Free AI Prompts for Creators, Coders & Visionaries</p>
           
           <!-- Instant Hero Search Bar -->
           <div class="hero-search-box">
-            <span class="hero-search-icon">🔍</span>
+            <svg class="icon hero-search-icon" aria-hidden="true"><use href="#i-search"/></svg>
             <input 
               type="text" 
               class="hero-search-input" 
@@ -1414,7 +1483,7 @@
       <div class="container" style="margin-top: 50px;">
         <div class="section-header">
           <div class="section-title-wrap">
-            <h2>⭐ Featured Masterpieces</h2>
+            <h2>Featured Masterpieces</h2>
             <p>Hand-picked top tier prompts tested for maximum output quality</p>
           </div>
           <button class="btn btn-outline btn-sm" onclick="showPage('prompts')">View All Prompts →</button>
@@ -1429,7 +1498,7 @@
       <div class="container" style="margin-top: 30px;">
         <div class="section-header">
           <div class="section-title-wrap">
-            <h2>⚡ Recently Added Prompts</h2>
+            <h2>Recently Added Prompts</h2>
             <p>Fresh additions to elevate your generative workflow</p>
           </div>
           <button class="btn btn-outline btn-sm" onclick="showPage('prompts')">Browse Complete Library →</button>
@@ -1491,33 +1560,33 @@
         <p style="color: var(--muted); margin-top: 6px;">Have a question, prompt suggestion, or custom partnership request?</p>
 
         <div class="contact-card">
-          <div class="contact-icon">💬</div>
+          <div class="contact-icon"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></div>
           <h3>Chat Direct On WhatsApp</h3>
           <p style="color: var(--muted); max-width: 480px; margin: 12px auto 26px;">
             Reach our founder and community team instantly on WhatsApp. We respond within a few hours.
           </p>
 
           <a id="contactWhatsAppLink" href="#" target="_blank" class="btn btn-gradient" style="font-size: 1.05rem; padding: 14px 32px;">
-            <span>📱</span> Connect on WhatsApp
+            <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg> Connect on WhatsApp
           </a>
 
           <div class="contact-info-list">
             <div class="contact-info-item">
-              <span style="font-size: 1.3rem;">📍</span>
+              <svg class="icon" style="font-size:1.3rem" aria-hidden="true"><use href="#i-pin"/></svg>
               <div>
                 <strong>Global Address:</strong>
                 <span id="contactAddressDisplay">Silicon Valley, CA & Worldwide</span>
               </div>
             </div>
             <div class="contact-info-item">
-              <span style="font-size: 1.3rem;">✉️</span>
+              <svg class="icon" style="font-size:1.3rem" aria-hidden="true"><use href="#i-mail"/></svg>
               <div>
                 <strong>Official Email:</strong>
                 <span>support@khanprompts.com</span>
               </div>
             </div>
             <div class="contact-info-item">
-              <span style="font-size: 1.3rem;">⚡</span>
+              <svg class="icon" style="font-size:1.3rem" aria-hidden="true"><use href="#i-bolt"/></svg>
               <div>
                 <strong>Community Status:</strong>
                 <span style="color: #10b981; font-weight: 600;">Active & 100% Free Public Library</span>
@@ -1599,8 +1668,8 @@
         </div>
 
         <div class="tabs-nav">
-          <button class="tab-btn active" onclick="switchDashTab('saved', this)">📌 Saved Prompts (<span id="savedCount">0</span>)</button>
-          <button class="tab-btn" onclick="switchDashTab('liked', this)">❤️ Liked Prompts (<span id="likedCount">0</span>)</button>
+          <button class="tab-btn active" onclick="switchDashTab('saved', this)">Saved Prompts (<span id="savedCount">0</span>)</button>
+          <button class="tab-btn" onclick="switchDashTab('liked', this)">Liked Prompts (<span id="likedCount">0</span>)</button>
         </div>
 
         <!-- Dashboard Prompts Grid -->
@@ -1614,7 +1683,7 @@
         <div class="admin-container">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
             <div>
-              <h2>🛡️ Admin Management Suite</h2>
+              <h2>Admin Management Suite</h2>
               <p style="color: var(--muted); font-size: 0.9rem;">Configure site properties, manage prompt library, and export data</p>
             </div>
             <button class="btn btn-outline btn-sm" onclick="exitAdmin()">Exit Admin</button>
@@ -1622,12 +1691,12 @@
 
           <!-- Admin Tabs -->
           <div class="admin-tabs">
-            <button class="admin-tab-btn active" onclick="switchAdminTab('dash', this)">📊 Metrics</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('settings', this)">⚙️ Settings</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('manage', this)">📝 Manage Prompts</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('categories', this)">🏷️ Categories</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('users', this)">👥 Users</button>
-            <button class="admin-tab-btn" onclick="switchAdminTab('data', this)">💾 Data & Backup</button>
+            <button class="admin-tab-btn active" onclick="switchAdminTab('dash', this)">Metrics</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('settings', this)">Settings</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('manage', this)">Manage Prompts</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('categories', this)">Categories</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('users', this)">Users</button>
+            <button class="admin-tab-btn" onclick="switchAdminTab('data', this)">Data & Backup</button>
           </div>
 
           <!-- Tab 1: Admin Overview -->
@@ -1660,6 +1729,7 @@
           <!-- Tab 2: Site Settings -->
           <div id="admin-tab-settings" class="admin-tab-content">
             <form onsubmit="saveAdminSettings(event)">
+              <h4 class="settings-section-title">General</h4>
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
                 <div class="input-group">
                   <label class="input-label">Site Name</label>
@@ -1668,10 +1738,6 @@
                 <div class="input-group">
                   <label class="input-label">Tagline</label>
                   <input type="text" class="input-field" id="setTagline" required />
-                </div>
-                <div class="input-group">
-                  <label class="input-label">Primary Color (#HEX)</label>
-                  <input type="text" class="input-field" id="setPrimaryColor" required />
                 </div>
                 <div class="input-group">
                   <label class="input-label">WhatsApp Number (e.g. 1234567890)</label>
@@ -1688,8 +1754,52 @@
                     <option value="solid">Solid Primary</option>
                   </select>
                 </div>
+                <div class="input-group">
+                  <label class="input-label">Footer Tagline</label>
+                  <input type="text" class="input-field" id="setFooterText" placeholder="100% Free Forever." />
+                </div>
               </div>
 
+              <h4 class="settings-section-title">Theme Colors</h4>
+              <div class="color-grid">
+                <div class="color-field">
+                  <input type="color" id="setPrimaryColor" value="#7c3aed" oninput="this.parentElement.querySelector('.hex').textContent=this.value.toUpperCase()" />
+                  <div><label>Primary</label><div class="hex">#7C3AED</div></div>
+                </div>
+                <div class="color-field">
+                  <input type="color" id="setAccentColor" value="#ec4899" oninput="this.parentElement.querySelector('.hex').textContent=this.value.toUpperCase()" />
+                  <div><label>Accent</label><div class="hex">#EC4899</div></div>
+                </div>
+                <div class="color-field">
+                  <input type="color" id="setBgColor" value="#0f0f1a" oninput="this.parentElement.querySelector('.hex').textContent=this.value.toUpperCase()" />
+                  <div><label>Background</label><div class="hex">#0F0F1A</div></div>
+                </div>
+                <div class="color-field">
+                  <input type="color" id="setCardColor" value="#1a1a2e" oninput="this.parentElement.querySelector('.hex').textContent=this.value.toUpperCase()" />
+                  <div><label>Cards</label><div class="hex">#1A1A2E</div></div>
+                </div>
+                <div class="color-field">
+                  <input type="color" id="setTextColor" value="#ffffff" oninput="this.parentElement.querySelector('.hex').textContent=this.value.toUpperCase()" />
+                  <div><label>Text</label><div class="hex">#FFFFFF</div></div>
+                </div>
+              </div>
+
+              <h4 class="settings-section-title">Display</h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                <div class="input-group">
+                  <label class="input-label">Prompts Per Page</label>
+                  <input type="number" class="input-field" id="setPromptsPerPage" min="3" max="60" step="1" />
+                </div>
+                <div class="input-group">
+                  <label class="input-label">Default Theme</label>
+                  <select class="input-field" id="setDefaultTheme">
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                  </select>
+                </div>
+              </div>
+
+              <h4 class="settings-section-title">Announcement</h4>
               <div class="input-group">
                 <label class="input-label">Announcement Banner Text</label>
                 <input type="text" class="input-field" id="setAnnounceText" />
@@ -1703,7 +1813,7 @@
               <!-- Supabase Cloud Connection Inputs -->
               <div style="margin-top: 20px; padding: 20px; border-radius: 14px; background: var(--code-bg); border: 1px solid var(--border); margin-bottom: 24px;">
                 <h4 style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
-                  <span>☁️</span> Supabase Cloud Database Connection
+                  Supabase Cloud Database Connection
                 </h4>
                 <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 14px;">
                   Configure your credentials here or directly inside <code>.env</code> / <code>env.js</code>.
@@ -1835,7 +1945,7 @@
       <div class="footer-grid">
         <div class="footer-col">
           <div class="brand-logo footer-logo-secret" id="secretFooterLogo" onclick="handleFooterSecretClick()" title="KHAN Prompts">
-            <span style="font-size: 1.4rem;">⚡</span>
+            <span class="brand-mark">K</span>
             <span class="brand-gradient" id="footerLogoText">KHAN PROMPTS</span>
           </div>
           <p style="color: var(--muted); font-size: 0.9rem; margin-top: 12px; max-width: 380px;">
@@ -1865,7 +1975,7 @@
       </div>
 
       <div class="footer-bottom">
-        <div>&copy; <span id="currentYear"></span> <span id="footerSiteName">KHAN Prompts</span>. All rights reserved. 100% Free Forever.</div>
+        <div>&copy; <span id="currentYear"></span> <span id="footerSiteName">KHAN Prompts</span>. All rights reserved. <span id="footerTagline">100% Free Forever.</span></div>
         <div>
           <span style="color: var(--muted); font-size: 0.8rem;">Powered by Outfit + Supabase</span>
         </div>
@@ -1892,23 +2002,23 @@
         
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
           <span style="font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase;">Prompt Blueprint</span>
-          <button class="btn btn-outline btn-sm" id="modalCopyBtn" onclick="modalCopyAction()">📋 Copy Prompt</button>
+          <button class="btn btn-outline btn-sm" id="modalCopyBtn" onclick="modalCopyAction()"><svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg> Copy Prompt</button>
         </div>
         
         <div class="modal-prompt-box" id="modalPromptText"></div>
 
         <div class="card-meta" style="margin-top: 20px; padding-top: 16px;">
           <div class="meta-metrics">
-            <span class="metric-item">👁️ <span id="modalViews">0</span> views</span>
-            <span class="metric-item">📋 <span id="modalCopies">0</span> copies</span>
-            <span class="metric-item">❤️ <span id="modalLikes">0</span> likes</span>
+            <span class="metric-item"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg> <span id="modalViews">0</span> views</span>
+            <span class="metric-item"><svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg> <span id="modalCopies">0</span> copies</span>
+            <span class="metric-item"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg> <span id="modalLikes">0</span> likes</span>
           </div>
           <span id="modalDate" style="font-size: 0.8rem;">Recently Added</span>
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-outline" id="modalSaveBtn" onclick="modalSaveAction()">🔖 Save Prompt</button>
-        <button class="btn btn-gradient" id="modalWhatsAppBtn" onclick="modalWhatsAppAction()">💬 Share on WhatsApp</button>
+        <button class="btn btn-outline" id="modalSaveBtn" onclick="modalSaveAction()"><svg class="icon" aria-hidden="true"><use href="#i-bookmark"/></svg> Save Prompt</button>
+        <button class="btn btn-gradient" id="modalWhatsAppBtn" onclick="modalWhatsAppAction()"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg> Share on WhatsApp</button>
         <button class="btn btn-primary" onclick="modalCopyAction()">Copy Full Prompt</button>
       </div>
     </div>
@@ -1918,7 +2028,7 @@
   <div class="modal-overlay" id="adminAuthModal">
     <div class="modal-card" style="max-width: 380px;">
       <div class="modal-header">
-        <h3 class="modal-title">🔐 Admin Verification</h3>
+        <h3 class="modal-title">Admin Verification</h3>
         <button class="modal-close" onclick="closeModal('adminAuthModal')">&times;</button>
       </div>
       <div class="modal-body" style="text-align: center;">
@@ -1966,8 +2076,16 @@
               <select class="input-field" id="formCategory" required></select>
             </div>
             <div class="input-group">
-              <label class="input-label">Image URL (Optional)</label>
-              <input type="url" class="input-field" id="formImage" placeholder="https://images.unsplash.com/..." />
+              <label class="input-label">Upload an Image (Optional)</label>
+              <input type="file" class="input-field" id="formImageFile" accept="image/*" onchange="handlePromptImageSelect(event)" />
+              <input type="hidden" id="formImage" />
+              <div id="formImagePreviewWrap" style="margin-top:10px; display:none;">
+                <img id="formImagePreview" alt="Prompt image preview" style="max-width:100%; max-height:180px; border-radius:10px; border:1px solid var(--border);" />
+                <div style="margin-top:8px;">
+                  <button type="button" class="btn btn-outline btn-sm" onclick="clearPromptImage()">Remove image</button>
+                </div>
+              </div>
+              <p style="font-size:0.8rem; color:var(--muted); margin-top:6px;">Choose an image from your device — it is resized automatically and saved with the prompt.</p>
             </div>
           </div>
 
@@ -2109,9 +2227,16 @@
       site_name: "KHAN Prompts",
       tagline: "Curated Free AI Prompts for Creators, Coders & Visionaries",
       primary_color: "#7c3aed",
+      accent_color: "#ec4899",
+      bg_color: "#0f0f1a",
+      card_color: "#1a1a2e",
+      text_color: "#ffffff",
       whatsapp: "1234567890",
       address: "Silicon Valley, CA & Worldwide",
-      announce: "🔥 Welcome to KHAN Prompts! Explore 100% free production-ready AI prompts updated regularly.",
+      footer_text: "100% Free Forever.",
+      prompts_per_page: 9,
+      default_theme: "dark",
+      announce: "Welcome to KHAN Prompts! Explore 100% free production-ready AI prompts updated regularly.",
       announce_on: true,
       logo_style: "gradient"
     };
@@ -2204,18 +2329,40 @@
       const next = current === "dark" ? "light" : "dark";
       applyTheme(next);
       localStorage.setItem("khan_theme", next);
-      toast(`Switched to ${next} mode 🌓`);
+      toast(`Switched to ${next} mode`);
+    }
+
+    function updateThemeIcon(theme) {
+      const use = document.getElementById("themeIconUse");
+      if (use) use.setAttribute("href", theme === "dark" ? "#i-moon" : "#i-sun");
     }
 
     function applyTheme(theme) {
       document.documentElement.setAttribute("data-theme", theme);
-      const icon = document.getElementById("themeIcon");
-      if (icon) icon.textContent = theme === "dark" ? "🌙" : "☀️";
+      updateThemeIcon(theme);
     }
 
     // ==========================================================
     // 4. DATA SYNCHRONIZATION (SUPABASE & LOCAL FALLBACK)
     // ==========================================================
+    // ---------- settings helpers ----------
+    function asHex(v, fb) { return /^#[0-9a-fA-F]{6}$/.test((v || "").trim()) ? v.trim() : fb; }
+    function hexToRgb(hex) {
+      const h = hex.replace("#", "");
+      return [parseInt(h.substr(0, 2), 16), parseInt(h.substr(2, 2), 16), parseInt(h.substr(4, 2), 16)];
+    }
+    function shadeHex(hex, amt) {
+      const c = (n) => Math.max(0, Math.min(255, n + amt));
+      return "#" + hexToRgb(hex).map(n => c(n).toString(16).padStart(2, "0")).join("");
+    }
+    function setColorInput(id, val, fb) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.value = asHex(val, fb);
+      const hexEl = el.parentElement.querySelector(".hex");
+      if (hexEl) hexEl.textContent = el.value.toUpperCase();
+    }
+
     async function loadAppSettings() {
       let loaded = false;
       if (isSupabaseConfigured && supabaseClient) {
@@ -2241,10 +2388,35 @@
     }
 
     function applySettingsToUI() {
-      // Colors
-      if (appSettings.primary_color) {
-        document.documentElement.style.setProperty("--primary", appSettings.primary_color);
+      // Theme colors -> CSS variables
+      const primary = asHex(appSettings.primary_color, "#7c3aed");
+      const accent = asHex(appSettings.accent_color, "#ec4899");
+      const bgc = asHex(appSettings.bg_color, "#0f0f1a");
+      const cardc = asHex(appSettings.card_color, "#1a1a2e");
+      const textc = asHex(appSettings.text_color, "#ffffff");
+      const prgb = hexToRgb(primary).join(", ");
+      const rs = document.documentElement.style;
+      rs.setProperty("--primary", primary);
+      rs.setProperty("--primary-rgb", prgb);
+      rs.setProperty("--primary-hover", shadeHex(primary, -28));
+      rs.setProperty("--border-focus", primary);
+      rs.setProperty("--accent", accent);
+      rs.setProperty("--accent-gradient", "linear-gradient(135deg, " + primary + " 0%, " + accent + " 100%)");
+      rs.setProperty("--text-gradient", "linear-gradient(135deg, " + primary + " 0%, " + accent + " 100%)");
+      rs.setProperty("--bg", bgc);
+      rs.setProperty("--card", cardc);
+      rs.setProperty("--text", textc);
+      rs.setProperty("--shadow-glow", "0 0 25px rgba(" + prgb + ", 0.25)");
+
+      // Prompts per page + default theme
+      promptsPageLimit = Math.max(3, Math.min(60, parseInt(appSettings.prompts_per_page, 10) || 9));
+      if (!localStorage.getItem("khan_theme")) {
+        applyTheme(appSettings.default_theme === "light" ? "light" : "dark");
       }
+
+      // Footer tagline
+      const footerTag = document.getElementById("footerTagline");
+      if (footerTag) footerTag.textContent = appSettings.footer_text || DEFAULT_SETTINGS.footer_text;
 
       // Announcement
       const announceBar = document.getElementById("announceBar");
@@ -2286,7 +2458,14 @@
       if (sNameInput) {
         sNameInput.value = appSettings.site_name || "";
         document.getElementById("setTagline").value = appSettings.tagline || "";
-        document.getElementById("setPrimaryColor").value = appSettings.primary_color || "#7c3aed";
+        setColorInput("setPrimaryColor", appSettings.primary_color, "#7c3aed");
+        setColorInput("setAccentColor", appSettings.accent_color, "#ec4899");
+        setColorInput("setBgColor", appSettings.bg_color, "#0f0f1a");
+        setColorInput("setCardColor", appSettings.card_color, "#1a1a2e");
+        setColorInput("setTextColor", appSettings.text_color, "#ffffff");
+        document.getElementById("setFooterText").value = appSettings.footer_text || "";
+        document.getElementById("setPromptsPerPage").value = parseInt(appSettings.prompts_per_page, 10) || 9;
+        document.getElementById("setDefaultTheme").value = appSettings.default_theme === "light" ? "light" : "dark";
         document.getElementById("setWhatsApp").value = appSettings.whatsapp || "";
         document.getElementById("setAddress").value = appSettings.address || "";
         document.getElementById("setAnnounceText").value = appSettings.announce || "";
@@ -2408,18 +2587,7 @@
     }
 
     function updateStatusBanner(state, message) {
-      const dot = document.getElementById("cloudDot");
-      const text = document.getElementById("cloudStatusText");
-      if (!dot || !text) return;
-
-      text.textContent = message;
-      if (state === "connected") {
-        dot.className = "status-dot";
-      } else if (state === "demo") {
-        dot.className = "status-dot warn";
-      } else {
-        dot.className = "status-dot";
-      }
+      // Status banner removed from UI — connection now runs silently in the background.
     }
 
     function setupRealtime() {
@@ -2478,8 +2646,8 @@
         document.getElementById("adminStatCopies").textContent = totalCopies.toLocaleString();
         document.getElementById("adminStatLikes").textContent = totalLikes.toLocaleString();
         document.getElementById("adminDbStatusText").textContent = isSupabaseConfigured 
-          ? "✅ Active Supabase Cloud Connection. Realtime updates enabled."
-          : "⚠️ Running on browser localStorage fallback. Set SUPABASE_URL & ANON_KEY for shared cloud sync.";
+          ? "Active Supabase Cloud Connection. Realtime updates enabled."
+          : "Running on browser localStorage fallback. Set SUPABASE_URL & ANON_KEY for shared cloud sync.";
       }
     }
 
@@ -2495,7 +2663,7 @@
 
       const featured = appPrompts.filter(p => p.active !== false && p.featured).slice(0, 3);
       if (featured.length === 0) {
-        grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><span class="empty-icon">⭐</span><p>No featured prompts yet.</p></div>`;
+        grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><span class="empty-icon"><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg></span><p>No featured prompts yet.</p></div>`;
         return;
       }
 
@@ -2508,7 +2676,7 @@
 
       const latest = appPrompts.filter(p => p.active !== false).slice(0, 6);
       if (latest.length === 0) {
-        grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><span class="empty-icon">🔍</span><p>No prompts found.</p></div>`;
+        grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><span class="empty-icon"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></span><p>No prompts found.</p></div>`;
         return;
       }
 
@@ -2554,24 +2722,24 @@
 
             <div class="card-meta">
               <div class="meta-metrics">
-                <span class="metric-item">👁️ ${p.views || 0}</span>
-                <span class="metric-item">📋 ${p.copies || 0}</span>
-                <span class="metric-item">❤️ <span id="likes-count-${p.id}">${p.likes || 0}</span></span>
+                <span class="metric-item"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg> ${p.views || 0}</span>
+                <span class="metric-item"><svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg> ${p.copies || 0}</span>
+                <span class="metric-item"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg> <span id="likes-count-${p.id}">${p.likes || 0}</span></span>
               </div>
             </div>
 
             <div class="card-actions">
               <button class="btn btn-primary btn-sm" onclick="copyPrompt('${p.id}')" title="Copy Prompt to Clipboard">
-                <span>📋</span> Copy
+                <svg class="icon" aria-hidden="true"><use href="#i-copy"/></svg> Copy
               </button>
               <button class="btn btn-outline btn-sm ${isSaved ? 'save-active' : ''}" id="save-btn-${p.id}" onclick="saveForUser('${p.id}')" title="Save to My Space">
-                <span>🔖</span>
+                <svg class="icon" aria-hidden="true"><use href="#i-bookmark"/></svg>
               </button>
               <button class="btn btn-outline btn-sm ${isLiked ? 'like-active' : ''}" id="like-btn-${p.id}" onclick="likePrompt('${p.id}')" title="Like Prompt">
-                <span>❤️</span>
+                <svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>
               </button>
               <button class="btn btn-outline btn-sm" onclick="sharePrompt('${p.id}')" title="Share">
-                <span>🔗</span>
+                <svg class="icon" aria-hidden="true"><use href="#i-link"/></svg>
               </button>
             </div>
           </div>
@@ -2604,7 +2772,7 @@
       const isSaved = isPromptSaved(prompt.id);
       const modalSaveBtn = document.getElementById("modalSaveBtn");
       if (modalSaveBtn) {
-        modalSaveBtn.innerHTML = isSaved ? "🔖 Saved in My Space" : "🔖 Save Prompt";
+        modalSaveBtn.innerHTML = isSaved ? "<svg class='icon' aria-hidden='true'><use href='#i-bookmark'/></svg> Saved in My Space" : "<svg class='icon' aria-hidden='true'><use href='#i-bookmark'/></svg> Save Prompt";
         modalSaveBtn.className = isSaved ? "btn btn-outline save-active" : "btn btn-outline";
       }
 
@@ -2643,7 +2811,7 @@
 
       try {
         await navigator.clipboard.writeText(p.prompt_text);
-        toast("Prompt copied to clipboard! 🎉");
+        toast("Prompt copied to clipboard!");
 
         // Increment copies count
         p.copies = (p.copies || 0) + 1;
@@ -2660,7 +2828,7 @@
       } catch (err) {
         // Fallback copy
         fallbackCopyTextToClipboard(p.prompt_text);
-        toast("Prompt copied to clipboard! 🎉");
+        toast("Prompt copied to clipboard!");
       }
     }
 
@@ -2700,12 +2868,12 @@
         // Unlike
         likedList = likedList.filter(id => id !== promptId);
         p.likes = Math.max(0, (p.likes || 0) - 1);
-        toast("Prompt removed from liked ❤️");
+        toast("Prompt removed from liked");
       } else {
         // Like
         likedList.push(promptId);
         p.likes = (p.likes || 0) + 1;
-        toast("Added to your liked prompts! ❤️");
+        toast("Added to your liked prompts!");
       }
 
       localStorage.setItem(storageKey, JSON.stringify(likedList));
@@ -2735,7 +2903,7 @@
     function saveForUser(promptId) {
       const session = getCurrentSession();
       if (!session) {
-        toast("Please log in to save prompts to your space! 🔒");
+        toast("Please log in to save prompts to your space!");
         showPage("login");
         return;
       }
@@ -2750,10 +2918,10 @@
 
       if (hasSaved) {
         savedList = savedList.filter(id => id !== promptId);
-        toast("Removed prompt from your saved list 📌");
+        toast("Removed prompt from your saved list");
       } else {
         savedList.push(promptId);
-        toast("Saved prompt to your space! 📌");
+        toast("Saved prompt to your space!");
       }
 
       localStorage.setItem(storageKey, JSON.stringify(savedList));
@@ -2766,7 +2934,7 @@
         const isSaved = isPromptSaved(activeModalPrompt.id);
         const modalSaveBtn = document.getElementById("modalSaveBtn");
         if (modalSaveBtn) {
-          modalSaveBtn.innerHTML = isSaved ? "🔖 Saved in My Space" : "🔖 Save Prompt";
+          modalSaveBtn.innerHTML = isSaved ? "<svg class='icon' aria-hidden='true'><use href='#i-bookmark'/></svg> Saved in My Space" : "<svg class='icon' aria-hidden='true'><use href='#i-bookmark'/></svg> Save Prompt";
           modalSaveBtn.className = isSaved ? "btn btn-outline save-active" : "btn btn-outline";
         }
       }
@@ -2804,10 +2972,10 @@
       // Fallback: Copy link
       try {
         await navigator.clipboard.writeText(shareUrl);
-        toast("Direct link copied to clipboard! 🔗");
+        toast("Direct link copied to clipboard!");
       } catch(err) {
         fallbackCopyTextToClipboard(shareUrl);
-        toast("Direct link copied to clipboard! 🔗");
+        toast("Direct link copied to clipboard!");
       }
     }
 
@@ -2895,7 +3063,7 @@
       if (filteredPrompts.length === 0) {
         grid.innerHTML = `
           <div class="empty-state" style="grid-column: 1/-1;">
-            <span class="empty-icon">🔍</span>
+            <span class="empty-icon"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></span>
             <h3>No matching prompts found</h3>
             <p style="margin-top: 6px;">Try adjusting your search terms or category filter.</p>
           </div>
@@ -2993,7 +3161,7 @@
         if (authActions) {
           authActions.innerHTML = `
             <button class="btn btn-outline btn-sm" onclick="showPage('dashboard')" title="My Space">
-              <span>👤</span> ${escapeHtml(session.name.split(" ")[0])}
+              <svg class="icon" aria-hidden="true"><use href="#i-user"/></svg> ${escapeHtml(session.name.split(" ")[0])}
             </button>
             <button class="btn btn-ghost btn-sm" onclick="handleLogout()" title="Log Out">
               Sign Out
@@ -3048,7 +3216,7 @@
 
       updateAuthUI();
       updateMetricCounters();
-      toast(`Welcome aboard, ${name}! 🎉`);
+      toast(`Welcome aboard, ${name}!`);
       showPage("dashboard");
     }
 
@@ -3068,7 +3236,7 @@
         const session = { name: user.name, email: user.email, loggedInAt: Date.now() };
         localStorage.setItem("khan_session", JSON.stringify(session));
         updateAuthUI();
-        toast(`Welcome back, ${user.name}! 👋`);
+        toast(`Welcome back, ${user.name}!`);
         showPage("dashboard");
       } else {
         // If no user exists yet in localStorage, create a quick demo session for simplicity
@@ -3078,7 +3246,7 @@
           localStorage.setItem("khan_users", JSON.stringify(users));
           localStorage.setItem("khan_session", JSON.stringify({ name: defaultUser.name, email, loggedInAt: Date.now() }));
           updateAuthUI();
-          toast(`Account created & logged in! Welcome! 🎉`);
+          toast(`Account created & logged in! Welcome!`);
           showPage("dashboard");
           return;
         }
@@ -3140,7 +3308,7 @@
       if (targetPrompts.length === 0) {
         grid.innerHTML = `
           <div class="empty-state" style="grid-column: 1/-1;">
-            <span class="empty-icon">${currentDashTab === 'saved' ? '🔖' : '❤️'}</span>
+            <span class="empty-icon">${currentDashTab === 'saved' ? '<svg class="icon" aria-hidden="true"><use href="#i-bookmark"/></svg>' : '<svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>'}</span>
             <h3>No ${currentDashTab} prompts yet</h3>
             <p style="margin-top: 6px;">Browse the library and tap the ${currentDashTab === 'saved' ? 'bookmark' : 'heart'} button to collect your favorite prompts.</p>
             <button class="btn btn-primary btn-sm" style="margin-top: 16px;" onclick="showPage('prompts')">Browse Prompts</button>
@@ -3153,6 +3321,46 @@
     }
 
     // ==========================================================
+    // PROMPT IMAGE UPLOAD (client-side resize -> data URL)
+    // ==========================================================
+    function handlePromptImageSelect(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      if (!file.type || !file.type.startsWith("image/")) {
+        toast("Please choose an image file.");
+        event.target.value = "";
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const maxDim = 900;
+          const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const w = Math.max(1, Math.round(img.width * scale));
+          const h = Math.max(1, Math.round(img.height * scale));
+          const canvas = document.createElement("canvas");
+          canvas.width = w; canvas.height = h;
+          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+          document.getElementById("formImage").value = dataUrl;
+          document.getElementById("formImagePreview").src = dataUrl;
+          document.getElementById("formImagePreviewWrap").style.display = "block";
+        };
+        img.onerror = function() { toast("Could not read that image file."); };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearPromptImage() {
+      document.getElementById("formImage").value = "";
+      document.getElementById("formImageFile").value = "";
+      document.getElementById("formImagePreview").removeAttribute("src");
+      document.getElementById("formImagePreviewWrap").style.display = "none";
+    }
+
+    // ==========================================================
     // 11. ADMIN GATE & MANAGEMENT SUITE
     // ==========================================================
     function handleFooterSecretClick() {
@@ -3160,7 +3368,7 @@
       clearTimeout(footerClickTimer);
       footerClickTimer = setTimeout(() => { footerClickCount = 0; }, 2000);
 
-      if (footerClickCount >= 5) {
+      if (footerClickCount >= 3) {
         footerClickCount = 0;
         checkAdminAccess();
       }
@@ -3191,13 +3399,13 @@
         localStorage.setItem("khan_admin", "true");
         closeModal("adminAuthModal");
         updateAuthUI();
-        toast("Admin unlocked! Welcome, Administrator 🛡️");
+        toast("Admin unlocked! Welcome, Administrator");
         showPage("adminPanel");
         renderAdminPromptsTable();
         renderAdminCategoriesTable();
         renderAdminUsersTable();
       } else {
-        toast("Incorrect Passcode. Access Denied ❌");
+        toast("Incorrect Passcode. Access Denied");
       }
     }
 
@@ -3221,7 +3429,14 @@
       event.preventDefault();
       appSettings.site_name = document.getElementById("setSiteName").value.trim();
       appSettings.tagline = document.getElementById("setTagline").value.trim();
-      appSettings.primary_color = document.getElementById("setPrimaryColor").value.trim();
+      appSettings.primary_color = asHex(document.getElementById("setPrimaryColor").value, "#7c3aed");
+      appSettings.accent_color = asHex(document.getElementById("setAccentColor").value, "#ec4899");
+      appSettings.bg_color = asHex(document.getElementById("setBgColor").value, "#0f0f1a");
+      appSettings.card_color = asHex(document.getElementById("setCardColor").value, "#1a1a2e");
+      appSettings.text_color = asHex(document.getElementById("setTextColor").value, "#ffffff");
+      appSettings.footer_text = document.getElementById("setFooterText").value.trim();
+      appSettings.prompts_per_page = Math.max(3, Math.min(60, parseInt(document.getElementById("setPromptsPerPage").value, 10) || 9));
+      appSettings.default_theme = document.getElementById("setDefaultTheme").value;
       appSettings.whatsapp = document.getElementById("setWhatsApp").value.trim();
       appSettings.address = document.getElementById("setAddress").value.trim();
       appSettings.announce = document.getElementById("setAnnounceText").value.trim();
@@ -3237,7 +3452,7 @@
         SUPABASE_URL = newSbUrl;
         SUPABASE_ANON_KEY = newSbKey;
         if (initSupabaseClient()) {
-          toast("Supabase credentials updated! Connecting... ☁️");
+          toast("Supabase credentials updated! Connecting...");
           await loadPrompts();
           setupRealtime();
         }
@@ -3254,22 +3469,30 @@
             site_name: appSettings.site_name,
             tagline: appSettings.tagline,
             primary_color: appSettings.primary_color,
+            accent_color: appSettings.accent_color,
+            bg_color: appSettings.bg_color,
+            card_color: appSettings.card_color,
+            text_color: appSettings.text_color,
             whatsapp: appSettings.whatsapp,
             address: appSettings.address,
+            footer_text: appSettings.footer_text,
+            prompts_per_page: appSettings.prompts_per_page,
+            default_theme: appSettings.default_theme,
             announce: appSettings.announce,
             announce_on: appSettings.announce_on,
             logo_style: appSettings.logo_style,
             updated_at: new Date().toISOString()
           });
-          toast("Settings synced with Supabase! ☁️");
+          toast("Settings synced with Supabase!");
         } catch (err) {
           toast("Saved locally (Supabase update error)");
         }
       } else {
-        toast("Settings saved locally! ✨");
+        toast("Settings saved locally!");
       }
 
       applySettingsToUI();
+      renderPromptsPageGrid();
     }
 
     // Admin Manage Prompts Table
@@ -3289,7 +3512,7 @@
             <strong>${escapeHtml(p.title)}</strong>
           </td>
           <td><span class="badge badge-category">${escapeHtml(p.category || 'General')}</span></td>
-          <td>${p.featured ? '⭐ Yes' : 'No'}</td>
+          <td>${p.featured ? '★ Yes' : 'No'}</td>
           <td>
             <span style="color: ${p.active !== false ? '#10b981' : '#ef4444'}; font-weight: 700;">
               ${p.active !== false ? 'Active' : 'Hidden'}
@@ -3313,6 +3536,11 @@
       document.getElementById("formTitle").value = promptData ? promptData.title : "";
       document.getElementById("formCategory").value = promptData ? promptData.category : (appCategories[0] || "Marketing");
       document.getElementById("formImage").value = promptData ? promptData.image || "" : "";
+      document.getElementById("formImageFile").value = "";
+      const _pv = document.getElementById("formImagePreview");
+      const _pvw = document.getElementById("formImagePreviewWrap");
+      if (promptData && promptData.image) { _pv.src = promptData.image; _pvw.style.display = "block"; }
+      else { _pv.removeAttribute("src"); _pvw.style.display = "none"; }
       document.getElementById("formDesc").value = promptData ? promptData.description || "" : "";
       document.getElementById("formPromptText").value = promptData ? promptData.prompt_text : "";
       document.getElementById("formFeatured").checked = promptData ? !!promptData.featured : false;
@@ -3361,7 +3589,7 @@
         if (isSupabaseConfigured && supabaseClient) {
           await supabaseClient.from("prompts").update(payload).eq("id", pId);
         }
-        toast("Prompt updated successfully! ✨");
+        toast("Prompt updated successfully!");
       } else {
         // Add new prompt
         const newPrompt = {
@@ -3378,7 +3606,7 @@
         if (isSupabaseConfigured && supabaseClient) {
           await supabaseClient.from("prompts").insert([newPrompt]);
         }
-        toast("New prompt published! 🚀");
+        toast("New prompt published!");
       }
 
       savePromptsToLocalStorage();
@@ -3530,7 +3758,7 @@
     function exportPromptsJSON() {
       const jsonStr = JSON.stringify(appPrompts, null, 2);
       navigator.clipboard.writeText(jsonStr);
-      toast("Prompts JSON copied to clipboard! 📋");
+      toast("Prompts JSON copied to clipboard!");
     }
 
     function downloadPromptsJSON() {
@@ -3542,7 +3770,7 @@
       a.download = `khan_prompts_backup_${Date.now()}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      toast("Backup file downloaded! 💾");
+      toast("Backup file downloaded!");
     }
 
     async function handleImportJSON() {
@@ -3581,9 +3809,9 @@
         // Bulk insert to Supabase if active
         if (isSupabaseConfigured && supabaseClient) {
           await supabaseClient.from("prompts").insert(formatted);
-          toast(`Imported ${formatted.length} prompts to Supabase Cloud! ☁️`);
+          toast(`Imported ${formatted.length} prompts to Supabase Cloud!`);
         } else {
-          toast(`Imported ${formatted.length} prompts to local store! 💾`);
+          toast(`Imported ${formatted.length} prompts to local store!`);
         }
 
         renderAllPromptSections();
@@ -3613,7 +3841,7 @@
 
       const t = document.createElement("div");
       t.className = "toast";
-      t.innerHTML = `<span>⚡</span> <span>${escapeHtml(msg)}</span>`;
+      t.innerHTML = `<span>${escapeHtml(msg)}</span>`;
       container.appendChild(t);
 
       setTimeout(() => {
